@@ -99,7 +99,7 @@ class Vuelo {
 
             // Suma la distancia de la ruta a los km recorridos del avión
             int nuevaDistancia = avion.getKmRecorridos() + ruta.getDistancia();
-            avion.setDistanciaRecorrida(nuevaDistancia);
+            avion.setKmRecorridos(nuevaDistancia);
 
             aterrizo = true;
         }
