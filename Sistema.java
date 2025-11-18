@@ -11,7 +11,7 @@ public class Sistema {
 
         // Declaracion de Arreglos y Matrices
 
-        Avion[] arrAviones = new Avion[0];// *** HACER MODULO QUE CALCULE EL LARGO DE UNA LISTA
+        Avion[] arrAviones = new Avion[100];// *** HACER MODULO QUE CALCULE EL LARGO DE UNA LISTA
         Ruta[] arrRutas = new Ruta[0];
         Vuelo[] arrVuelos = new Vuelo[0]; 
         Vuelo[][] cronograma = new Vuelo[7][15]; // 7 dias de la semana x 15 horas habiles del aereopuerto.
@@ -26,7 +26,7 @@ public class Sistema {
                 System.out.println("\nDatos EXTRAIDOS y ALMACENADOS Correctamente.\nEl CRONOGRAMA ha sido Actualizado.");
                     break;
                 case 2:
-
+                System.out.println(arrAviones);
                     break;
                 case 3:
 
@@ -76,9 +76,10 @@ public class Sistema {
         String rutaArchivo = "C:\\Users\\valen\\OneDrive\\Desktop\\TrabajoPrácticoFinal\\Aviones.txt";
         
         try {
-            BufferedReader lector = new BufferedReader(new InputStreamReader(
-                new FileInputStream(rutaArchivo), "UTF-8"
-            ));
+            //BufferedReader permite leer línea por línea.
+            //FileInputStream abre el archivo como bytes, InputStreamReader dice con qué codificación convertir esos bytes → caracteres.
+            //"UTF-8" asegura que las tildes y ñ se lean bien.
+            BufferedReader lector = new BufferedReader(new InputStreamReader(new FileInputStream(rutaArchivo), "UTF-8"));
             String linea;
             int largoLista = 0;
 
@@ -107,9 +108,10 @@ public class Sistema {
         String rutaArchivo = "C:\\Users\\valen\\OneDrive\\Desktop\\TrabajoPrácticoFinal\\Ruta.txt";
         
         try {
-            BufferedReader lector = new BufferedReader(new InputStreamReader(
-                new FileInputStream(rutaArchivo), "UTF-8"
-            )); //Scanner que lee la informacion del archivo con codificación UTF-8
+            //BufferedReader permite leer línea por línea.
+            //FileInputStream abre el archivo como bytes, InputStreamReader dice con qué codificación convertir esos bytes → caracteres.
+            //"UTF-8" asegura que las tildes y ñ se lean bien.
+            BufferedReader lector = new BufferedReader(new InputStreamReader(new FileInputStream(rutaArchivo), "UTF-8"));
             String linea;
             int largoLista = 0;
 
@@ -124,13 +126,14 @@ public class Sistema {
                 arrRutas[largoLista] = new Ruta(numeroRuta, ciudadOrigen, ciudadDestino, distancia, esInternacional);
                 largoLista++;
             }
-            lector.close();  // Cierra el archivo
+            lector.close();
             
         } catch (FileNotFoundException ex) {
             System.out.println("Error: " + ex.getMessage()); //Error al hallar la ruta
         } catch (IOException ex) {
             System.err.println("Error: " + ex.getMessage()); //Error de lectura o Escritura
         }
+        
     }
 
 }
