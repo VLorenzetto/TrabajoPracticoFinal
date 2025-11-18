@@ -7,51 +7,50 @@ import java.util.Scanner;
 
 public class Sistema {
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+        try (Scanner sc = new Scanner(System.in)) {  // try-with-resources
+            // Declaracion de Arreglos y Matrices
+            Avion[] arrAviones = new Avion[100];
+            Ruta[] arrRutas = new Ruta[100];
+            Vuelo[] arrVuelos = new Vuelo[120]; 
+            Vuelo[][] cronograma = new Vuelo[7][15]; // 7 dias de la semana x 15 horas habiles del aereopuerto.
 
-        // Declaracion de Arreglos y Matrices
+            int opcion;
+            do {
+                mostrarMenu();
+                opcion = validarOpcion(sc, "Opcion: ");
+                switch (opcion) {
+                    case 1:
+                        cargarAviones(arrAviones);
+                        cargarRutas(arrRutas);
+                        cargarVuelos(arrVuelos, arrAviones, arrRutas);
+                        System.out.println("\nDatos EXTRAIDOS y ALMACENADOS Correctamente.");
+                        cargarCronograma(cronograma, arrVuelos);
 
-        Avion[] arrAviones = new Avion[100];// *** HACER MODULO QUE CALCULE EL LARGO DE UNA LISTA
-        Ruta[] arrRutas = new Ruta[0];
-        Vuelo[] arrVuelos = new Vuelo[0]; 
-        Vuelo[][] cronograma = new Vuelo[7][15]; // 7 dias de la semana x 15 horas habiles del aereopuerto.
+                        
+                            break;
+                        case 2:
 
-        int opcion;
-        do {
-            mostrarMenu();
-            opcion = validarOpcion(sc, "Opcion: ");
-            switch (opcion) {
-                case 1:
-                cargarAviones(arrAviones);
-                cargarRutas(arrRutas);
-                cargarVuelos(arrVuelos, arrAviones, arrRutas);
+                            break;
+                        case 3:
 
-                System.out.println("\nDatos EXTRAIDOS y ALMACENADOS Correctamente.\nEl CRONOGRAMA ha sido Actualizado.");
-                    break;
-                case 2:
+                            break;
+                        case 4:
 
-                    break;
-                case 3:
+                            break;
+                        case 5:
 
-                    break;
-                case 4:
+                            break;
+                        case 6:
 
-                    break;
-                case 5:
-
-                    break;
-                case 6:
-
-                    break;
-                case 0:
-                    System.out.println("Saliendo...");
-                    break;
-                default:
-                    System.out.println("Opción inválida");
-            }
-        } while (opcion != 0);
-
-        sc.close();
+                            break;
+                        case 0:
+                            System.out.println("Saliendo...");
+                            break;
+                        default:
+                            System.out.println("Opción inválida");
+                }
+            } while (opcion != 0);
+        }  // Scanner se cierra automáticamente aquí
     }
 
     private static void mostrarMenu() {
@@ -74,6 +73,7 @@ public class Sistema {
         return sc.nextInt();
     }
 
+    // Cargar aviones desde un archivo .txt
     public static void cargarAviones(Avion[] arrAviones) {
 
         String rutaArchivo = "C:\\Users\\valen\\OneDrive\\Desktop\\TrabajoPrácticoFinal\\Aviones.txt";
@@ -106,9 +106,10 @@ public class Sistema {
         }
     }
 
+    // Cargar rutas desde un archivo .txt
     public static void cargarRutas(Ruta[] arrRutas) {
 
-        String rutaArchivo = "C:\\Users\\valen\\OneDrive\\Desktop\\TrabajoPrácticoFinal\\Ruta.txt";
+        String rutaArchivo = "C:\\Users\\valen\\OneDrive\\Desktop\\TrabajoPrácticoFinal\\Rutas.txt";
         
         try {
             //BufferedReader permite leer línea por línea.
@@ -139,18 +140,15 @@ public class Sistema {
 
     }
     
+    // Cargar vuelos desde un archivo .txt
     public static void cargarVuelos(Vuelo[] arrVuelos, Avion[] arrAviones, Ruta[] arrRutas){
-        String rutaArchivo = "C:\\Users\\valen\\OneDrive\\Desktop\\TrabajoPrácticoFinal\\Ruta.txt";
+        String rutaArchivo = "C:\\Users\\valen\\OneDrive\\Desktop\\TrabajoPrácticoFinal\\Vuelos.txt";
         
-        try {
-            //BufferedReader permite leer línea por línea.
-            //FileInputStream abre el archivo como bytes, InputStreamReader dice con qué codificación convertir esos bytes → caracteres.
-            //"UTF-8" asegura que las tildes y ñ se lean bien.
-            BufferedReader lector = new BufferedReader(new InputStreamReader(new FileInputStream(rutaArchivo), "UTF-8"));
+        try (BufferedReader lector = new BufferedReader(new InputStreamReader(new FileInputStream(rutaArchivo), "UTF-8"))) {  // try-with-resources
             String linea;
             int largoLista = 0;
 
-            while ((linea = lector.readLine()) != null && largoLista < arrRutas.length) {
+            while ((linea = lector.readLine()) != null && largoLista < arrVuelos.length) {
 
                 String[] separador = linea.split(";");
                 String idVuelo = separador[0];
@@ -186,8 +184,7 @@ public class Sistema {
                     System.out.println("Aviso: vuelo " + idVuelo + " ignorado (avión o ruta no encontrado).");
                 }
             }
-
-            lector.close();
+            // lector se cierra automáticamente aquí
             
         } catch (FileNotFoundException ex) {
             System.out.println("Error: " + ex.getMessage()); //Error al hallar la ruta
@@ -195,6 +192,25 @@ public class Sistema {
             System.err.println("Error: " + ex.getMessage()); //Error de lectura o Escritura
         }
 
+    }
+
+    public static void cargarCronograma(Vuelo[][] cronograma, Vuelo[] arrVuelos){
+        System.out.println();
+        for (Vuelo v : arrVuelos) {
+            if (v == null) continue;
+            int dia = Vuelo.posicionDia(v.getDia());
+            int hora = Vuelo.posicionHora(v.getHora());
+            if (dia < 0 || dia >= cronograma.length || hora < 0 || hora >= cronograma[0].length) {
+                System.out.println("Aviso: vuelo " + v.getIdVuelo() + " con día/hora inválidos (" + v.getDia() + " " + v.getHora() + ")");
+                continue;
+            }
+            if (cronograma[dia][hora] != null) {
+                System.out.println("Aviso: Horario ocupado para Vuelo: " + v.getIdVuelo() + " en " + v.getDia() + " " + v.getHora());
+                continue;
+            }
+            cronograma[dia][hora] = v;
+        }
+        System.out.println("\nEl CRONOGRAMA ha sido Actualizado.");
     }
 
 }

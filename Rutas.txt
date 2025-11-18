@@ -1,4 +1,3 @@
-Número de ruta;Ciudad Origen;Ciudad Destino;Distancia en kilómetros;Internacional
 AR101;Buenos Aires;Córdoba;695;No
 AR102;Buenos Aires;Mendoza;985;No
 AR103;Córdoba;Rosario;400;No
