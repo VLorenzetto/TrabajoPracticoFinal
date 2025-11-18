@@ -9,13 +9,12 @@ class Vuelo {
 
     // Constructores
 
-    public Vuelo(String idVuelo, Avion avion, Ruta ruta, String dia, String hora, int cantPasajeros) {
+    public Vuelo(String idVuelo, Avion avion, Ruta ruta, String dia, String hora) {
         this.idVuelo = idVuelo;
         this.avion = avion;
         this.ruta = ruta;
         this.dia = dia;
         this.hora = hora;
-        this.cantidadPasajeros = cantPasajeros;
         aterrizo = false;
     }
 

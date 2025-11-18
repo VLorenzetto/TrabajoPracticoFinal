@@ -23,10 +23,13 @@ public class Sistema {
             switch (opcion) {
                 case 1:
                 cargarAviones(arrAviones);
+                cargarRutas(arrRutas);
+                cargarVuelos(arrVuelos, arrAviones, arrRutas);
+
                 System.out.println("\nDatos EXTRAIDOS y ALMACENADOS Correctamente.\nEl CRONOGRAMA ha sido Actualizado.");
                     break;
                 case 2:
-                System.out.println(arrAviones);
+
                     break;
                 case 3:
 
@@ -118,12 +121,12 @@ public class Sistema {
             while ((linea = lector.readLine()) != null && largoLista < arrRutas.length) {
 
                 String[] separador = linea.split(";");
-                String numeroRuta = separador[0];
+                String idRuta = separador[0];
                 String ciudadOrigen = separador[1];
                 String ciudadDestino = separador[2];
                 int distancia = Integer.parseInt(separador[3]);
                 String esInternacional = separador[4];
-                arrRutas[largoLista] = new Ruta(numeroRuta, ciudadOrigen, ciudadDestino, distancia, esInternacional);
+                arrRutas[largoLista] = new Ruta(idRuta, ciudadOrigen, ciudadDestino, distancia, esInternacional);
                 largoLista++;
             }
             lector.close();
@@ -133,7 +136,65 @@ public class Sistema {
         } catch (IOException ex) {
             System.err.println("Error: " + ex.getMessage()); //Error de lectura o Escritura
         }
+
+    }
+    
+    public static void cargarVuelos(Vuelo[] arrVuelos, Avion[] arrAviones, Ruta[] arrRutas){
+        String rutaArchivo = "C:\\Users\\valen\\OneDrive\\Desktop\\TrabajoPrácticoFinal\\Ruta.txt";
         
+        try {
+            //BufferedReader permite leer línea por línea.
+            //FileInputStream abre el archivo como bytes, InputStreamReader dice con qué codificación convertir esos bytes → caracteres.
+            //"UTF-8" asegura que las tildes y ñ se lean bien.
+            BufferedReader lector = new BufferedReader(new InputStreamReader(new FileInputStream(rutaArchivo), "UTF-8"));
+            String linea;
+            int largoLista = 0;
+
+            while ((linea = lector.readLine()) != null && largoLista < arrRutas.length) {
+
+                String[] separador = linea.split(";");
+                String idVuelo = separador[0];
+                String idAvion = separador[1];
+                String idRuta = separador[2];
+                String dia = separador[3];
+                String hora = separador[4];
+
+                // Buscar Avion por id
+                Avion avionEncontrado = null;
+                for (Avion a : arrAviones) {
+                    if (a == null) continue; // Continue salta todo lo que queda dentro del for y pasa a la siguiente posición.
+                    if (a.getIdAvion().equals(idAvion)) {
+                        avionEncontrado = a;
+                        break;
+                    }
+                }
+                // Buscar Ruta por id
+                Ruta rutaEncontrada = null;
+                for (Ruta r : arrRutas) {
+                    if (r == null) continue;// Continue salta todo lo que queda dentro del for y pasa a la siguiente posición.
+                    if (r.getNumeroRuta().equals(idRuta)) {
+                        rutaEncontrada = r;
+                        break;
+                    }
+                }
+
+                // Solo crear vuelo si existen avion y ruta
+                if (avionEncontrado != null && rutaEncontrada != null) {
+                    arrVuelos[largoLista++] = new Vuelo(idVuelo, avionEncontrado, rutaEncontrada, dia, hora);
+                } else {
+                    
+                    System.out.println("Aviso: vuelo " + idVuelo + " ignorado (avión o ruta no encontrado).");
+                }
+            }
+
+            lector.close();
+            
+        } catch (FileNotFoundException ex) {
+            System.out.println("Error: " + ex.getMessage()); //Error al hallar la ruta
+        } catch (IOException ex) {
+            System.err.println("Error: " + ex.getMessage()); //Error de lectura o Escritura
+        }
+
     }
 
 }
