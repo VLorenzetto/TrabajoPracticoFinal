@@ -1,12 +1,12 @@
 class Ruta {
-    private int numeroRuta;
+    private String numeroRuta;
     private String ciudadOrigen;
     private String ciudadDestino;
     private int distancia;
     private boolean esInternacional;
 
     // Constructores
-    public Ruta(int numeroRuta, String ciudadOrigen, String ciudadDestino, int distancia, String esInternacional) {
+    public Ruta(String numeroRuta, String ciudadOrigen, String ciudadDestino, int distancia, String esInternacional) {
         this.numeroRuta = numeroRuta;
         this.ciudadOrigen = ciudadOrigen;
         this.ciudadDestino = ciudadDestino;
@@ -14,7 +14,7 @@ class Ruta {
         this.esInternacional = Ruta.verificaInternacional(esInternacional);
     }
 
-    public Ruta(int numeroRuta) {
+    public Ruta(String numeroRuta) {
         this.numeroRuta = numeroRuta;
         ciudadOrigen = "X";
         ciudadDestino = "X";
@@ -24,7 +24,7 @@ class Ruta {
 
     // Observadores
 
-    public int getNumeroRuta() {
+    public String getNumeroRuta() {
         return numeroRuta;
     }
 

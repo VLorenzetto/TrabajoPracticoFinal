@@ -52,7 +52,7 @@ class Avion {
     }
 
     public boolean equals(Avion otroAvion) {
-        return (idAvion == otroAvion.getIdAvion());
+        return idAvion.equals(otroAvion.getIdAvion());
     }
 
     // Modificadores
@@ -60,8 +60,8 @@ class Avion {
         this.cantidadVuelos = cantidadVuelos;
     }
 
-    public void setDistanciaRecorrida(int distancia) {
-        this.kmRecorridos = distancia;
+    public void setKmRecorridos(int kmRecorridos) {  
+        this.kmRecorridos = kmRecorridos;
     }
 
     // Propias de la clase
@@ -106,5 +106,6 @@ class Avion {
             }
         }
     }
+
 
 }
