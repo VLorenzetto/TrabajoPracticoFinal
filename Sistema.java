@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Scanner;
 
+// NOTAS: Hacer modulo que muestre los dias disponibles del cronograma.
 public class Sistema {
     public static void main(String[] args) {
-        try (Scanner sc = new Scanner(System.in)) { // try-with-resources
+        try (Scanner sc = new Scanner(System.in)) {
+
             // Declaracion de Arreglos y Matrices
             Avion[] arrAviones = new Avion[100];
             Ruta[] arrRutas = new Ruta[100];
@@ -232,13 +234,15 @@ public class Sistema {
             int dia = Vuelo.posicionDia(unVuelo.getDia());
             int hora = Vuelo.posicionHora(unVuelo.getHora());
             if (dia < 0 || dia >= cronograma.length || hora < 0 || hora >= cronograma[0].length) {
-                System.out.println("Aviso: Vuelo " + unVuelo.getIdVuelo() + " con DIA/HORA inválidos (" + unVuelo.getDia() + " "
-                        + unVuelo.getHora() + ")");
+                System.out.println(
+                        "Aviso: Vuelo " + unVuelo.getIdVuelo() + " con DIA/HORA inválidos (" + unVuelo.getDia() + " "
+                                + unVuelo.getHora() + ")");
                 continue;
             }
             if (cronograma[dia][hora] != null) {
-                System.out.println("Aviso: Horario ocupado para Vuelo (" + unVuelo.getIdVuelo() + ") en " + unVuelo.getDia() + " "
-                        + unVuelo.getHora());
+                System.out.println(
+                        "Aviso: Horario ocupado para Vuelo (" + unVuelo.getIdVuelo() + ") en " + unVuelo.getDia() + " "
+                                + unVuelo.getHora());
                 continue;
             }
             cronograma[dia][hora] = unVuelo;
@@ -289,7 +293,7 @@ public class Sistema {
     public static void cargarOtroVuelo(Vuelo[] arrVuelos, Avion[] arrAviones, Ruta[] arrRutas, Scanner sc) {
         String continuar;
         do {
-
+            // Busca si existe el id del Vuelo ingresado.
             String idVuelo = null;
             boolean idVueloExiste = true;
             while (idVueloExiste) {
@@ -308,6 +312,7 @@ public class Sistema {
                     }
             }
 
+            // Busca si existe el id del Avion ingresado.
             String idAvion = null;
             boolean idAvionExiste = false;
             while (!idAvionExiste) {
@@ -333,6 +338,8 @@ public class Sistema {
 
                 }
             }
+
+            // Busca si existe el id de la Ruta ingresada.
             String idRuta = null;
             boolean idRutaExiste = true;
             while (!idRutaExiste) {
@@ -356,12 +363,14 @@ public class Sistema {
             System.out.print("Ingrese el DIA para programar el vuelo (" + idVuelo + "): ");
             String dia = validarString(sc);
 
-            System.out.println("Ingrese la HORA para programar el vuelo (" + idVuelo + "): ");
+            System.out.print("Ingrese la HORA para programar el vuelo (" + idVuelo + "): ");
             String hora = validarString(sc);
 
+            // Crea variables de clase para las respectivas IDs.
             Avion idOtroAvion = new Avion(idAvion);
             Ruta idOtraRuta = new Ruta(idRuta);
 
+            // Guarda el vuelo un la primer posicion vacia del arreglo.
             boolean vueloGuardado = false;
             for (int i = 0; i < arrVuelos.length; i++) {
                 if (arrVuelos[i] == null) {
