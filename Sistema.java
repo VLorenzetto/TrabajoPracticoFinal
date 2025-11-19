@@ -33,6 +33,8 @@ public class Sistema {
 
                         break;
                     case 3:
+                        cargarOtroVuelo(arrVuelos, arrAviones, arrRutas, sc);
+                        cargarCronograma(cronograma, arrVuelos);
 
                         break;
                     case 4:
@@ -63,13 +65,13 @@ public class Sistema {
                         System.out.println("Opción inválida");
                 }
             } while (opcion != 0);
-        } // Scanner se cierra automáticamente aquí
+        } // Scanner se cierra automáticamente.
     }
 
     private static void mostrarMenu() {
         System.out.println("\n=== Sistema de Aereolinea ===");
         System.out.println("1) Cargar los Aviones, Rutas y Vuelos de los archios de texto.");
-        System.out.println("2) Agregar nuevo Avion a la flota.");
+        System.out.println("2) Cargar nuevo Avion a la flota.");
         System.out.println("3) Cargar nuevo vuelo al cronograma.");
         System.out.println("4) Marcar la realización efectiva de un vuelo");
         System.out.println("5) Mostrar el promedio de pasajeros que efectivamente volaron.");
@@ -195,12 +197,12 @@ public class Sistema {
                 }
                 // Buscar Ruta por id
                 Ruta rutaEncontrada = null;
-                for (Ruta r : arrRutas) {
-                    if (r == null)
+                for (Ruta unaRuta : arrRutas) {
+                    if (unaRuta == null)
                         continue;// Continue salta todo lo que queda dentro del for y pasa a la siguiente
                                  // posición.
-                    if (r.getNumeroRuta().equals(idRuta)) {
-                        rutaEncontrada = r;
+                    if (unaRuta.getNumeroRuta().equals(idRuta)) {
+                        rutaEncontrada = unaRuta;
                         break;
                     }
                 }
@@ -224,58 +226,159 @@ public class Sistema {
 
     public static void cargarCronograma(Vuelo[][] cronograma, Vuelo[] arrVuelos) {
         System.out.println();
-        for (Vuelo v : arrVuelos) {
-            if (v == null)
+        for (Vuelo unVuelo : arrVuelos) {
+            if (unVuelo == null)
                 continue;
-            int dia = Vuelo.posicionDia(v.getDia());
-            int hora = Vuelo.posicionHora(v.getHora());
+            int dia = Vuelo.posicionDia(unVuelo.getDia());
+            int hora = Vuelo.posicionHora(unVuelo.getHora());
             if (dia < 0 || dia >= cronograma.length || hora < 0 || hora >= cronograma[0].length) {
-                System.out.println("Aviso: Vuelo " + v.getIdVuelo() + " con DIA/HORA inválidos (" + v.getDia() + " "
-                        + v.getHora() + ")");
+                System.out.println("Aviso: Vuelo " + unVuelo.getIdVuelo() + " con DIA/HORA inválidos (" + unVuelo.getDia() + " "
+                        + unVuelo.getHora() + ")");
                 continue;
             }
             if (cronograma[dia][hora] != null) {
-                System.out.println("Aviso: Horario ocupado para Vuelo (" + v.getIdVuelo() + ") en " + v.getDia() + " "
-                        + v.getHora());
+                System.out.println("Aviso: Horario ocupado para Vuelo (" + unVuelo.getIdVuelo() + ") en " + unVuelo.getDia() + " "
+                        + unVuelo.getHora());
                 continue;
             }
-            cronograma[dia][hora] = v;
+            cronograma[dia][hora] = unVuelo;
         }
         System.out.println("\nEl CRONOGRAMA ha sido Actualizado.");
     }
 
     public static void cargarOtroAvion(Avion[] arrAviones, Scanner sc) {
 
-        // Carga y control de los datos del Avion.
-        System.out.print("\nIngrese idAvion: ");
-        String idAvion = validarString(sc);
+        String continuar;
+        do {
+            // Carga y control de los datos del Avion.
+            System.out.print("\nIngrese ID del AVIÓN: ");
+            String idAvion = validarString(sc);
 
-        while (!Avion.verificarIdAvion(idAvion)) {
-            System.out.print("Ingrese un ID Valido: ");
-            idAvion = sc.nextLine();
-        }
-        System.out.print("Ingrese MODELO del AVION: ");
-        String modeloAvion = validarString(sc);
-        System.out.print("Ingrese CANTIDAD de VUELOS: ");
-        int cantidadVuelos = validarInt(sc);
-        System.out.print("Ingrese CANTIDAD de ASIENTOS: ");
-        int cantidadAsientos = validarInt(sc);
-        System.out.print("Ingrese los KILOMETROS RECORRIDOS: ");
-        int kmRecorridos = validarInt(sc);
-
-        // Se crea un avion de la clase Avion
-        Avion nuevoAvion = new Avion(idAvion, modeloAvion, cantidadVuelos, cantidadAsientos, kmRecorridos);
-
-        // Ingresa el nuevo Avion al arreglo existente.
-        for (int i = 0; i < arrAviones.length; i++) {
-            if (arrAviones[i] == null) {
-                arrAviones[i] = nuevoAvion;
-                break;
+            while (!Avion.verificarIdAvion(idAvion)) {
+                System.out.print("Ingrese un ID Valido: ");
+                idAvion = sc.nextLine();
             }
-        }
+            System.out.print("Ingrese MODELO del AVIÓN: ");
+            String modeloAvion = validarString(sc);
+            System.out.print("Ingrese CANTIDAD de VUELOS: ");
+            int cantidadVuelos = validarInt(sc);
+            System.out.print("Ingrese CANTIDAD de ASIENTOS: ");
+            int cantidadAsientos = validarInt(sc);
+            System.out.print("Ingrese los KILOMETROS RECORRIDOS: ");
+            int kmRecorridos = validarInt(sc);
 
-        System.out.println("\nAvión Cargadado Exitosamente.");
+            // Se crea un avion de la clase Avion
+            Avion nuevoAvion = new Avion(idAvion, modeloAvion, cantidadVuelos, cantidadAsientos, kmRecorridos);
 
+            // Ingresa el nuevo Avion al arreglo existente.
+            for (int i = 0; i < arrAviones.length; i++) {
+                if (arrAviones[i] == null) {
+                    arrAviones[i] = nuevoAvion;
+                    break;
+                }
+            }
+
+            System.out.println("\nAvión Cargadado Exitosamente.");
+            System.out.print("¿Desea continuar cargando aviones al Sistema?: ");
+            continuar = validarString(sc);
+
+        } while (continuar.equals("s") || continuar.equals("si"));
+
+    }
+
+    public static void cargarOtroVuelo(Vuelo[] arrVuelos, Avion[] arrAviones, Ruta[] arrRutas, Scanner sc) {
+        String continuar;
+        do {
+
+            String idVuelo = null;
+            boolean idVueloExiste = true;
+            while (idVueloExiste) {
+
+                System.out.print("\nIngrese ID del VUELO: ");
+                idVuelo = validarString(sc);
+
+                idVueloExiste = false;
+
+                for (int i = 0; i < arrVuelos.length; i++)
+                    if (arrVuelos[i] != null && idVuelo.equals((arrVuelos[i]).getIdVuelo())) {
+                        System.out.println("ID del VUELO ya existe, intente nuevamente.");
+                        idVueloExiste = true;
+
+                        break;
+                    }
+            }
+
+            String idAvion = null;
+            boolean idAvionExiste = false;
+            while (!idAvionExiste) {
+
+                System.out.print("\nIngrese ID del AVIÓN: ");
+                idAvion = validarString(sc);
+
+                while (!Avion.verificarIdAvion(idAvion)) {
+                    System.out.print("Ingrese un ID Valido: ");
+                    idAvion = sc.nextLine();
+                }
+
+                idAvionExiste = false;
+
+                for (int i = 0; i < arrAviones.length; i++) {
+                    if (arrAviones[i] != null && idAvion.equals((arrAviones[i]).getIdAvion())) {
+                        idAvionExiste = true;
+                        break;
+                    }
+                    if (!idAvionExiste) {
+                        System.out.println("ID del AVIÓN inexistente, intente nuevamente.");
+                    }
+
+                }
+            }
+            String idRuta = null;
+            boolean idRutaExiste = true;
+            while (!idRutaExiste) {
+
+                System.out.print("\nIngrese ID del AVIÓN: ");
+                idRuta = validarString(sc);
+
+                idAvionExiste = false;
+
+                for (int i = 0; i < arrRutas.length; i++) {
+                    if (arrRutas[i] != null && idRuta.equals((arrRutas[i]).getNumeroRuta())) {
+                        idRutaExiste = true;
+                        break;
+                    }
+                    if (!idRutaExiste) {
+                        System.out.println("ID de la RUTA inexistente, intente nuevamente.");
+                    }
+                }
+            }
+
+            System.out.print("Ingrese el DIA para programar el vuelo (" + idVuelo + "): ");
+            String dia = validarString(sc);
+
+            System.out.println("Ingrese la HORA para programar el vuelo (" + idVuelo + "): ");
+            String hora = validarString(sc);
+
+            Avion idOtroAvion = new Avion(idAvion);
+            Ruta idOtraRuta = new Ruta(idRuta);
+
+            boolean vueloGuardado = false;
+            for (int i = 0; i < arrVuelos.length; i++) {
+                if (arrVuelos[i] == null) {
+                    arrVuelos[i] = new Vuelo(idVuelo, idOtroAvion, idOtraRuta, dia, hora);
+                    vueloGuardado = true;
+                    break;
+                }
+            }
+
+            if (!vueloGuardado) {
+                System.out.println("No hay espacios disponibles en el arreglo de Vuelos.");
+            }
+
+            System.out.println("\nVuelo Cargadado Exitosamente.");
+            System.out.print("¿Desea continuar cargando vuelos al Sistema?: ");
+            continuar = validarString(sc);
+        } while (continuar.equals("s") || continuar.equals("si"));
     }
 
     public static int validarInt(Scanner sc) {
