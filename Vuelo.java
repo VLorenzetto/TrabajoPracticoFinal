@@ -92,6 +92,8 @@ class Vuelo {
         this.cantidadPasajeros = cantidadPasajeros;
     }
 
+    // Propios de la clase
+
     // Marca el vuelo como realizado y actualiza los datos del avión
     public void marcarComoRealizado() {
         if (!aterrizo) {
@@ -105,8 +107,7 @@ class Vuelo {
             aterrizo = true;
         }
     }
-
-    // Propios de la clase
+    
     public static String normalizarDia(String texto) { // Quita las tildes de los dias para evitar errores
         texto = texto.toLowerCase();
         texto = texto.replace("á", "a");

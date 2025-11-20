@@ -44,7 +44,8 @@ public class Sistema {
 
                         break;
                     case 5:
-                        Vuelo.imprimirArrVuelos(arrVuelos);
+                        Ruta.imprimirArrRutas(arrRutas);
+                        
                         break;
                     case 6:
 
@@ -189,6 +190,7 @@ public class Sistema {
                 if (avion != null && ruta != null) {
                     Vuelo unVuelo = new Vuelo(idVuelo, avion, ruta, dia, hora);
                     unVuelo.setCantidadPasajeros(avion.getCantidadAsientos());
+                    unVuelo.setAterrizaje(true);
                     arrVuelos[largoLista++] = unVuelo;
                 }
             }
@@ -420,8 +422,7 @@ public class Sistema {
     }
 
     public static int validarInt(Scanner sc) {
-        while (!sc.hasNextInt()) { // .hasNextInt() Devuelve true si lo próximo que el usuario ingresó es un entero
-                                   // válido
+        while (!sc.hasNextInt()) { // .hasNextInt() Devuelve true si lo próximo que el usuario ingresó es un entero válido.
             sc.next(); // Evita bucle en el while.
             System.out.print("Ingrese un Número Válido: ");
         }

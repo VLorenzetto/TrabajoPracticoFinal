@@ -63,21 +63,22 @@ class Ruta {
         return internacional != null && internacional.equalsIgnoreCase("SI");
     }
 
-    public static void imprimirArrRutas(Ruta[] arrRutas) {
+   public static void imprimirArrRutas(Ruta[] arrRutas) {
 
-        System.out.println("RUTA N°        ORIGEN           DESTINO     DISTANCIA   INTERNACIONAL");
-        System.out.println("-----------------------------------------------------------------------");
+    System.out.println("\nRUTA N°    ORIGEN               DESTINO              DISTANCIA       INTERNACIONAL");
+    System.out.println("----------------------------------------------------------------------------------");
 
-        for (Ruta datosRuta : arrRutas) {
-            if (datosRuta != null) {
-                System.out.printf("%-10d %-15s %-15s %-10d %-15s\\n",
-                        datosRuta.getNumeroRuta(),
-                        datosRuta.getCiudadOrigen(),
-                        datosRuta.getCiudadDestino(),
-                        datosRuta.getDistancia(),
-                        datosRuta.getEsInternacional() ? "Si" : "No");
-            }
+    for (Ruta datosRuta : arrRutas) {
+        if (datosRuta != null) {
+            System.out.printf("%-10s %-20s %-20s %-15d %-20s\n",
+                    datosRuta.getNumeroRuta(),
+                    datosRuta.getCiudadOrigen(),
+                    datosRuta.getCiudadDestino(),
+                    datosRuta.getDistancia(),
+                    datosRuta.getEsInternacional() ? "Si" : "No"
+            );
         }
     }
+}
 
 }
