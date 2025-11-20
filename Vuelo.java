@@ -15,6 +15,8 @@ class Vuelo {
         this.ruta = ruta;
         this.dia = dia;
         this.hora = hora;
+        cantidadPasajeros = 0;
+
         aterrizo = false;
     }
 
@@ -34,11 +36,11 @@ class Vuelo {
         return idVuelo;
     }
 
-    public Avion getAvion() {
+    public Avion getIdAvion() {
         return avion;
     }
 
-    public Ruta getRuta() {
+    public Ruta getNumeroRuta() {
         return ruta;
     }
 
@@ -148,6 +150,24 @@ class Vuelo {
             case "22" -> 14;
             default -> -1;
         };
+    }
+
+    public static void imprimirArrVuelos(Vuelo[] arrVuelos) {
+        System.out.println("ID       AVIÓN       RUTA       DÍA       HORA   PASAJEROS   REALIZADO");
+        System.out.println("-------------------------------------------------------------------------------");
+        for (Vuelo v : arrVuelos) {
+            if (v == null) continue;
+            String idAvion = v.getIdAvion() != null ? v.getIdAvion().getIdAvion() : "N/A";
+            String idRuta = v.getNumeroRuta() != null ? v.getNumeroRuta().getNumeroRuta() : "N/A";
+            System.out.printf("%-8s %-11s %-10s %-9s %-6s %-11d %-10s%n",
+                    v.getIdVuelo(),
+                    idAvion,
+                    idRuta,
+                    v.getDia(),
+                    v.getHora(),
+                    v.getCantidadPasajeros(),
+                    v.getAterrizaje() ? "Sí" : "No");
+        }
     }
 
 }
