@@ -505,7 +505,7 @@ public class Sistema {
             iter++;
         }
 
-        Vuelo.imprimirArrVuelosDistancias(arr);
+        Vuelo.imprimirArrVuelos(arr);
     }
 
     public static int validarInt(Scanner sc) {
