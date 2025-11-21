@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Scanner;
 
-// NOTAS: Hacer modulo que muestre los dias disponibles del cronograma.
 public class Sistema {
     public static void main(String[] args) {
         try (Scanner sc = new Scanner(System.in)) {
@@ -48,7 +47,7 @@ public class Sistema {
 
                         break;
                     case 6:
-                        ordenarPorKm(ListaVuelosPorDia(cronograma, sc));
+                        Vuelo.imprimirArrVuelos(ordenarPorKm(listaVuelosPorDia(cronograma, sc)));
 
                         break;
                     case 7:
@@ -80,7 +79,7 @@ public class Sistema {
         System.out.println("3) Cargar nuevo vuelo al cronograma.");
         System.out.println("4) Marcar la realización efectiva de un vuelo");
         System.out.println("5) Mostrar el promedio de pasajeros que efectivamente volaron.");
-        System.out.println("6) Mostrar lista de vuelos para un dia específico.");
+        System.out.println("6) Mostrar lista de vuelos para un dia específico (orden ascendente).");
         System.out.println("7) Mostrar los datos de un avión dado.");
         System.out.println("8) Buscar vuelos en un rango limitado.");
         System.out.println("9) Buscar cantidad de horarios sin vuelos en la semana.");
@@ -152,6 +151,8 @@ public class Sistema {
 
             while ((linea = lector.readLine()) != null && largoLista < arrRutas.length) {
 
+                // Separa la cadena cuando lee ";" y guarda cada subcadena en una posicion del
+                // arr diferente.
                 String[] separador = linea.split(";");
                 String idRuta = separador[0];
                 String ciudadOrigen = separador[1];
@@ -444,7 +445,7 @@ public class Sistema {
         return promedioPasajeros(arrVuelos, i + 1, suma, cant);
     }
 
-    public static Vuelo[] ListaVuelosPorDia(Vuelo[][] cronograma, Scanner sc) {
+    public static Vuelo[] listaVuelosPorDia(Vuelo[][] cronograma, Scanner sc) {
         Vuelo[] vuelos = new Vuelo[cronograma[0].length];
         boolean diaValido = false;
         String dia = null;
@@ -464,8 +465,7 @@ public class Sistema {
             }
         } while (!diaValido);
         // Si el dia es valido busca en que posicion está dentro de la matriz cronograma
-        // y
-        // guarda todos los vuelos de ese dia en un nuevo arreglo.
+        // y guarda todos los vuelos de ese dia en un nuevo arreglo.
         int k = Vuelo.posicionDia(dia);
         int j = 0;
         for (int i = 0; i < cronograma[0].length; i++) {
@@ -476,41 +476,50 @@ public class Sistema {
         return vuelos;
     }
 
-    public static void ordenarPorKm(Vuelo[] arr) {
-        int n = arr.length, iter = 0, j;
+    public static Vuelo[] ordenarPorKm(Vuelo[] arrVuelos) {
+
+        // Utilicé el metodo BURBUJA MEJORADO.
+        int i = 0;
         boolean ordenado = false;
         Vuelo aux;
 
-        while (iter < n - 1 && !ordenado) {
+        while (i < arrVuelos.length - 1 && !ordenado) { //
             ordenado = true;
 
-            for (j = 0; j <= n - 2 - iter; j++) {
+            // Limita el arreglo para verificar siempre de a pares en cada pasada.
+            for (int j = 0; j <= arrVuelos.length - 2 - i; j++) {
 
-                if (arr[j] == null || arr[j + 1] == null) {
-                    continue; // salta las posiciones vacías
+                // Verifica que las posiciones consecutivas que se van a comparar no sean null.
+                if (arrVuelos[j] == null || arrVuelos[j + 1] == null) {
+                    continue; // salta si las posiciones estan vacías
                 }
 
-                int distActual = arr[j].getNumeroRuta().getDistancia();
-                int distSiguiente = arr[j + 1].getNumeroRuta().getDistancia();
+                // Guarda la posicion actual y su consecutiva.
+                int distActual = arrVuelos[j].getDistancia();
+                int distSiguiente = arrVuelos[j + 1].getDistancia();
 
+                // Compara las posciones para ver si la consecutiva es menor a la actual.
                 if (distSiguiente < distActual) {
-                    ordenado = false;
+                    ordenado = false; // Da la orden para que el bucle principal siga.
 
-                    aux = arr[j];
-                    arr[j] = arr[j + 1];
-                    arr[j + 1] = aux;
+                    // Guarda la posicion actual en un arr aux y despues la intercambia con la
+                    // consecutiva
+                    aux = arrVuelos[j];
+                    arrVuelos[j] = arrVuelos[j + 1];
+                    arrVuelos[j + 1] = aux;
                 }
             }
 
-            iter++;
+            i++;
         }
 
-        Vuelo.imprimirArrVuelos(arr);
+        return arrVuelos; // Retorna el arr con los vuelos ordenados de forma ascendente.
     }
 
     public static int validarInt(Scanner sc) {
-        while (!sc.hasNextInt()) { // .hasNextInt() Devuelve true si lo próximo que el usuario ingresó es un entero
-                                   // válido.
+        // .hasNextInt() Devuelve true si lo próximo que el usuario ingresó es un entero
+        // válido.
+        while (!sc.hasNextInt()) {
             sc.next(); // Evita bucle en el while.
             System.out.print("Ingrese un Número Válido: ");
         }
@@ -520,14 +529,16 @@ public class Sistema {
     }
 
     public static String validarString(Scanner sc) {
-        String cadena = sc.nextLine().trim(); // Quita los espacios de los extremos
-        cadena = cadena.replaceAll("\\s+", " "); // Colapsa espacios internos
+        String cadena = sc.nextLine().trim().toLowerCase().replaceAll("\\s+", " ");
+        // .trim() Quita los espacios de los extremos.
+        // .toLowerCase() pone en minusculas toda la cadena.
+        // .replaceAll("\\s+", " ") colapsa todos los espacios internos.
 
         while (cadena.isEmpty()) { // .isEmpty devuelve true cuando la cadena está vacía.
             System.out.print("Ingrese una Cadena Válida: ");
-            cadena = sc.nextLine().trim();
-            cadena = cadena.replaceAll("\\s+", " ");
+            cadena = sc.nextLine().trim().toLowerCase().replaceAll("\\s+", " ");
         }
+
         return cadena;
     }
 
