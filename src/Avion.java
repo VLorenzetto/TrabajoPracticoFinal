@@ -46,9 +46,9 @@ class Avion {
     }
 
     public String toString() {
-        return ("Avión: [" + idAvion + "], Modelo: " + modeloAvion + ", Cantidad de vuelos: "
-                + cantidadVuelos + ", Cantidad de asientos: " + cantidadAsientos 
-                + " Distancia recorrida: " + kmRecorridos+ " Km.");
+        return ("Avión: [" + idAvion + "] | Modelo: " + modeloAvion + " | Cantidad de vuelos: "
+                + cantidadVuelos + " | Cantidad de asientos: " + cantidadAsientos 
+                + " | Distancia recorrida: " + kmRecorridos+ " Km.");
     }
 
     public boolean equals(Avion otroAvion) {

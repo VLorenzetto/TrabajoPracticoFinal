@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Scanner;
-
+//NOTAS: Agragar controlador para cuando todas las rutas sean verdaderas de un aviso
 public class Sistema {
     public static void main(String[] args) {
         try (Scanner sc = new Scanner(System.in)) {
@@ -51,6 +51,7 @@ public class Sistema {
 
                         break;
                     case 7:
+                        mostrarDatosAvion(arrAviones, sc);
 
                         break;
                     case 8:
@@ -101,7 +102,7 @@ public class Sistema {
     // Cargar aviones desde un archivo .txt
     public static void cargarAviones(Avion[] arrAviones) {
 
-        String rutaArchivo = "C:\\Users\\valen\\OneDrive\\Desktop\\TrabajoPrácticoFinal\\Aviones.txt";
+        String rutaArchivo = "C:\\Users\\valen\\OneDrive\\Desktop\\TrabajoPrácticoFinal\\src\\Aviones.txt";
 
         try {
             // BufferedReader permite leer línea por línea.
@@ -137,7 +138,7 @@ public class Sistema {
     // Cargar rutas desde un archivo .txt
     public static void cargarRutas(Ruta[] arrRutas) {
 
-        String rutaArchivo = "C:\\Users\\valen\\OneDrive\\Desktop\\TrabajoPrácticoFinal\\Rutas.txt";
+        String rutaArchivo = "C:\\Users\\valen\\OneDrive\\Desktop\\TrabajoPrácticoFinal\\src\\Rutas.txt";
 
         try {
             // BufferedReader permite leer línea por línea.
@@ -174,7 +175,7 @@ public class Sistema {
 
     // Cargar vuelos desde un archivo .txt
     public static void cargarVuelos(Vuelo[] arrVuelos, Avion[] arrAviones, Ruta[] arrRutas) {
-        String rutaArchivo = "C:\\Users\\valen\\OneDrive\\Desktop\\TrabajoPrácticoFinal\\Vuelos.txt";
+        String rutaArchivo = "C:\\Users\\valen\\OneDrive\\Desktop\\TrabajoPrácticoFinal\\src\\Vuelos.txt";
 
         try (BufferedReader lector = new BufferedReader(
                 new InputStreamReader(new FileInputStream(rutaArchivo), "UTF-8"))) {
@@ -286,7 +287,7 @@ public class Sistema {
 
             System.out.println("\nAvión Cargadado Exitosamente.");
             System.out.print("¿Desea continuar cargando aviones al Sistema? s/n: ");
-            continuar = validarString(sc);
+            continuar = validarString(sc).toLowerCase();
 
         } while (continuar.equals("s") || continuar.equals("si"));
 
@@ -326,12 +327,11 @@ public class Sistema {
 
                 while (!Avion.verificarIdAvion(idAvion)) {
                     System.out.print("Ingrese un ID Valido: ");
-                    idAvion = sc.nextLine();
+                    idAvion = validarString(sc);
                 }
 
                 idAvionExiste = false;
 
-                // Usar el módulo buscarAvion para obtener la referencia (si existe)
                 idAvionEncontrado = buscarAvion(arrAviones, idAvion);
                 idAvionExiste = (idAvionEncontrado != null);
                 if (!idAvionExiste) {
@@ -358,10 +358,10 @@ public class Sistema {
             }
 
             System.out.print("Ingrese el DIA para programar el vuelo (" + idVuelo + "): ");
-            String dia = validarString(sc);
+            String dia = validarString(sc).toLowerCase();
 
             System.out.print("Ingrese la HORA para programar el vuelo (" + idVuelo + "): ");
-            String hora = validarString(sc);
+            String hora = validarString(sc).toLowerCase();
 
             // Guarda el vuelo un la primer posicion vacia del arreglo.
             boolean vueloGuardado = false;
@@ -383,7 +383,7 @@ public class Sistema {
 
             System.out.println("\nVuelo Cargadado Exitosamente.");
             System.out.print("¿Desea continuar cargando vuelos al Sistema? s/n: ");
-            continuar = validarString(sc);
+            continuar = validarString(sc).toLowerCase();
         } while (continuar.equals("s") || continuar.equals("si"));
     }
 
@@ -422,7 +422,7 @@ public class Sistema {
             }
 
             System.out.print("¿Desea marcar la realización de otro vuelo? s/n: ");
-            continuar = validarString(sc);
+            continuar = validarString(sc).toLowerCase();
         } while (continuar.equals("si") || continuar.equals("s"));
     }
 
@@ -451,7 +451,7 @@ public class Sistema {
         String dia = null;
         do {
             System.out.print("Ingrese el DIA para buscar vuelos: ");
-            dia = validarString(sc);
+            dia = validarString(sc).toLowerCase();
             diaValido = false;
             // Repite hasta ingresar un dia valido.
             if (dia.equals("lunes") || dia.equals("martes") || dia.equals("miercoles") || dia.equals("jueves")
@@ -516,6 +516,32 @@ public class Sistema {
         return arrVuelos; // Retorna el arr con los vuelos ordenados de forma ascendente.
     }
 
+    public static void mostrarDatosAvion(Avion[] arrAviones, Scanner sc){
+        // Busca si existe el id del Avion ingresado.
+            Avion idAvionEncontrado = null;
+            String idAvion = null;
+            boolean idAvionExiste = false;
+            while (!idAvionExiste) {
+
+                System.out.print("\nIngrese ID del AVIÓN: ");
+                idAvion = validarString(sc);
+
+                while (!Avion.verificarIdAvion(idAvion)) {
+                    System.out.print("Ingrese un ID Valido: ");
+                    idAvion = validarString(sc);
+                }
+
+                idAvionExiste = false;
+
+                idAvionEncontrado = buscarAvion(arrAviones, idAvion);
+                idAvionExiste = (idAvionEncontrado != null);
+                if (!idAvionExiste) {
+                    System.out.println("ID del AVIÓN inexistente, intente nuevamente.");
+                }
+            }
+        System.out.println(idAvionEncontrado.toString());
+    }
+
     public static int validarInt(Scanner sc) {
         // .hasNextInt() Devuelve true si lo próximo que el usuario ingresó es un entero
         // válido.
@@ -529,14 +555,13 @@ public class Sistema {
     }
 
     public static String validarString(Scanner sc) {
-        String cadena = sc.nextLine().trim().toLowerCase().replaceAll("\\s+", " ");
+        String cadena = sc.nextLine().trim().replaceAll("\\s+", " ");
         // .trim() Quita los espacios de los extremos.
-        // .toLowerCase() pone en minusculas toda la cadena.
         // .replaceAll("\\s+", " ") colapsa todos los espacios internos.
 
         while (cadena.isEmpty()) { // .isEmpty devuelve true cuando la cadena está vacía.
             System.out.print("Ingrese una Cadena Válida: ");
-            cadena = sc.nextLine().trim().toLowerCase().replaceAll("\\s+", " ");
+            cadena = sc.nextLine().trim().replaceAll("\\s+", " ");
         }
 
         return cadena;
