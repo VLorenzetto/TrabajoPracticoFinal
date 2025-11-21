@@ -64,7 +64,7 @@ class Ruta {
     }
 
    public static void imprimirArrRutas(Ruta[] arrRutas) {
-
+    if (arrRutas.length == 0) return;
     System.out.println("\nRUTA N°    ORIGEN               DESTINO              DISTANCIA       INTERNACIONAL");
     System.out.println("----------------------------------------------------------------------------------");
 

@@ -159,7 +159,8 @@ class Vuelo {
 
 
     public static void imprimirArrVuelos(Vuelo[] arrVuelos) {
-        System.out.println("ID       AVIÓN       RUTA       DÍA       HORA   PASAJEROS   DIST(KM)   REALIZADO");
+        if (arrVuelos.length == 0) return;
+        System.out.println("\nID       AVIÓN       RUTA       DÍA       HORA   PASAJEROS   DIST(KM)   REALIZADO");
         System.out.println("-------------------------------------------------------------------------------------");
 
         for (Vuelo v : arrVuelos) {

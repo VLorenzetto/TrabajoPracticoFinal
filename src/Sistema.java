@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Scanner;
+
 //NOTAS: Agragar controlador para cuando todas las rutas sean verdaderas de un aviso
 public class Sistema {
     public static void main(String[] args) {
@@ -55,6 +56,7 @@ public class Sistema {
 
                         break;
                     case 8:
+                        Vuelo.imprimirArrVuelos(buscarVuelosEnRango(arrVuelos, sc));
 
                         break;
                     case 9:
@@ -81,7 +83,7 @@ public class Sistema {
         System.out.println("4) Marcar la realización efectiva de un vuelo");
         System.out.println("5) Mostrar el promedio de pasajeros que efectivamente volaron.");
         System.out.println("6) Mostrar lista de vuelos para un dia específico (orden ascendente).");
-        System.out.println("7) Mostrar los datos de un avión dado.");
+        System.out.println("7) Mostrar los datos de un avión.");
         System.out.println("8) Buscar vuelos en un rango limitado.");
         System.out.println("9) Buscar cantidad de horarios sin vuelos en la semana.");
         System.out.println("10) Buscar el primer vuelo internacional de cada día.");
@@ -516,30 +518,79 @@ public class Sistema {
         return arrVuelos; // Retorna el arr con los vuelos ordenados de forma ascendente.
     }
 
-    public static void mostrarDatosAvion(Avion[] arrAviones, Scanner sc){
+    public static void mostrarDatosAvion(Avion[] arrAviones, Scanner sc) {
         // Busca si existe el id del Avion ingresado.
-            Avion idAvionEncontrado = null;
-            String idAvion = null;
-            boolean idAvionExiste = false;
-            while (!idAvionExiste) {
+        Avion idAvionEncontrado = null;
+        String idAvion = null;
+        boolean idAvionExiste = false;
+        while (!idAvionExiste) {
 
-                System.out.print("\nIngrese ID del AVIÓN: ");
+            System.out.print("\nIngrese ID del AVIÓN: ");
+            idAvion = validarString(sc);
+
+            while (!Avion.verificarIdAvion(idAvion)) {
+                System.out.print("Ingrese un ID Valido: ");
                 idAvion = validarString(sc);
-
-                while (!Avion.verificarIdAvion(idAvion)) {
-                    System.out.print("Ingrese un ID Valido: ");
-                    idAvion = validarString(sc);
-                }
-
-                idAvionExiste = false;
-
-                idAvionEncontrado = buscarAvion(arrAviones, idAvion);
-                idAvionExiste = (idAvionEncontrado != null);
-                if (!idAvionExiste) {
-                    System.out.println("ID del AVIÓN inexistente, intente nuevamente.");
-                }
             }
+
+            idAvionExiste = false;
+
+            idAvionEncontrado = buscarAvion(arrAviones, idAvion);
+            idAvionExiste = (idAvionEncontrado != null);
+            if (!idAvionExiste) {
+                System.out.println("ID del AVIÓN inexistente, intente nuevamente.");
+            }
+        }
         System.out.println(idAvionEncontrado.toString());
+    }
+
+    public static Vuelo[] buscarVuelosEnRango(Vuelo[] arrVuelos, Scanner sc) {
+        Vuelo[] vuelosOrdenados = ordenarPorKm(arrVuelos);
+
+        System.out.print("Ingrese distancia Minima: ");
+        int kmMin = validarInt(sc);
+
+        System.out.print("Ingrese distancia Maxima: ");
+        int kmMax = validarInt(sc);
+
+        int ini = 0, fin = vuelosOrdenados.length, medio;
+
+        // Busqueda binaria para primer índice con km >= kmMin
+        while (ini < fin) {
+            medio = (ini + fin) / 2;
+            if (vuelosOrdenados[medio].getDistancia() >= kmMin)
+                fin = medio;
+            else
+                ini = medio + 1;
+        }
+        int desde = ini;
+
+        // Busqueda binaria para primer índice con km > kmMax
+        ini = desde;
+        fin = vuelosOrdenados.length;
+        while (ini < fin) {
+            medio = (ini + fin) / 2;
+            if (vuelosOrdenados[medio].getDistancia() > kmMax)
+                fin = medio;
+            else
+                ini = medio + 1;
+        }
+        int hasta = ini;
+
+        int cantidad = hasta - desde;
+
+        Vuelo[] res;
+        if (cantidad <= 0) {
+            System.out.println("\nNo hay vuelos en el rango seleccionado.");
+            res = new Vuelo[0]; // nunca null
+        } else {
+            res = new Vuelo[cantidad];
+            for (int i = 0; i < cantidad; i++) {
+                res[i] = vuelosOrdenados[desde + i];
+            }
+        }
+
+        return res;
     }
 
     public static int validarInt(Scanner sc) {

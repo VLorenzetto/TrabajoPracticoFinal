@@ -91,7 +91,7 @@ class Avion {
     }
 
     public static void imprimirArrAviones(Avion[] arrAviones) {
-
+        if (arrAviones.length == 0) return;
         System.out.println("ID         MODELO                         VUELOS     ASIENTOS   KM RECORRIDOS");
         System.out.println("--------------------------------------------------------------------------------");
 
