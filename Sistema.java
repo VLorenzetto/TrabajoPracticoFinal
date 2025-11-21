@@ -44,10 +44,11 @@ public class Sistema {
 
                         break;
                     case 5:
-                        Ruta.imprimirArrRutas(arrRutas);
-                        
+                        promedioPasajeros(arrVuelos, 0, 0, 0);
+
                         break;
                     case 6:
+                        ordenarPorKm(ListaVuelosPorDia(cronograma, sc));
 
                         break;
                     case 7:
@@ -75,7 +76,7 @@ public class Sistema {
     private static void mostrarMenu() {
         System.out.println("\n=== Sistema de Aereolinea ===");
         System.out.println("1) Cargar los Aviones, Rutas y Vuelos de los archios de texto.");
-        System.out.println("2) Cargar nuevo Avion a la flota.");
+        System.out.println("2) Cargar nuevo Avion al sistema.");
         System.out.println("3) Cargar nuevo vuelo al cronograma.");
         System.out.println("4) Marcar la realización efectiva de un vuelo");
         System.out.println("5) Mostrar el promedio de pasajeros que efectivamente volaron.");
@@ -243,23 +244,25 @@ public class Sistema {
 
         String continuar;
         do {
-            // Carga y control de los datos del Avion.
-            String idAvion = null;
+            String idAvion;
 
-            //Busca si el ID ya existe.
-            while (idAvion != null && buscarAvion(arrAviones, idAvion) != null) {
-
-                System.out.println("ID existente, intente nuevamente.");
-
+            // Pide y valida el ID hasta comprobar que no exista dentro del sistema.
+            do {
                 System.out.print("\nIngrese ID del AVIÓN: ");
                 idAvion = validarString(sc);
 
-                //Valida el formato del ID.
+                // Valida formato
                 while (!Avion.verificarIdAvion(idAvion)) {
                     System.out.print("Ingrese un ID válido: ");
-                    idAvion = sc.nextLine();
+                    idAvion = validarString(sc);
                 }
-            }
+
+                if (buscarAvion(arrAviones, idAvion) != null) {
+                    System.out.println("ID existente, intente nuevamente.");
+                }
+
+            } while (buscarAvion(arrAviones, idAvion) != null);
+
             System.out.print("Ingrese MODELO del AVIÓN: ");
             String modeloAvion = validarString(sc);
             System.out.print("Ingrese CANTIDAD de VUELOS: ");
@@ -365,7 +368,8 @@ public class Sistema {
                 if (arrVuelos[i] == null) {
                     arrVuelos[i] = new Vuelo(idVuelo, idAvionEncontrado, idRutaEncontrado, dia, hora);
 
-                    // Actualiza la cantidad de pasajeros acorde a la cantidad de asientos del avión.
+                    // Actualiza la cantidad de pasajeros acorde a la cantidad de asientos del
+                    // avión.
                     arrVuelos[i].setCantidadPasajeros(idAvionEncontrado.getCantidadAsientos());
                     vueloGuardado = true;
                     break;
@@ -421,8 +425,92 @@ public class Sistema {
         } while (continuar.equals("si") || continuar.equals("s"));
     }
 
+    public static double promedioPasajeros(Vuelo[] arrVuelos, int i, int suma, int cant) {
+        if (i == arrVuelos.length) {
+            // Caso base: si no hubo ningún vuelo válido, devolvemos 0 para evitar división
+            // por cero, sino hacemos el promedio de los ultimos datos guardados.
+            double promedio = cant == 0 ? 0 : (double) suma / cant;
+            System.out.println("\nEl promedio de pasajeros que efectivamente volaron es: " + promedio);
+            return promedio;
+        }
+        // Paso recursivo: si la posicion esta vacia y el vuelo efectivamente realizó el
+        // aterrizaje, suma la cantidad de pasajeros con la ultima guardada y suma 1 al
+        // contador de aviones.
+        if (arrVuelos[i] != null && arrVuelos[i].getAterrizaje() != false) {
+            suma += arrVuelos[i].getCantidadPasajeros();
+            cant++;
+        }
+
+        return promedioPasajeros(arrVuelos, i + 1, suma, cant);
+    }
+
+    public static Vuelo[] ListaVuelosPorDia(Vuelo[][] cronograma, Scanner sc) {
+        Vuelo[] vuelos = new Vuelo[cronograma[0].length];
+        boolean diaValido = false;
+        String dia = null;
+        do {
+            System.out.print("Ingrese el DIA para buscar vuelos: ");
+            dia = validarString(sc);
+            diaValido = false;
+            // Repite hasta ingresar un dia valido.
+            if (dia.equals("lunes") || dia.equals("martes") || dia.equals("miercoles") || dia.equals("jueves")
+                    || dia.equals("viernes") || dia.equals("sabado") || dia.equals("domingo")) {
+                diaValido = true;
+
+                break;
+            }
+            if (!diaValido) {
+                System.out.println("Ingrese un dia valido.");
+            }
+        } while (!diaValido);
+        // Si el dia es valido busca en que posicion está dentro de la matriz cronograma
+        // y
+        // guarda todos los vuelos de ese dia en un nuevo arreglo.
+        int k = Vuelo.posicionDia(dia);
+        int j = 0;
+        for (int i = 0; i < cronograma[0].length; i++) {
+            vuelos[j] = cronograma[k][i];
+            j++;
+        }
+
+        return vuelos;
+    }
+
+    public static void ordenarPorKm(Vuelo[] arr) {
+        int n = arr.length, iter = 0, j;
+        boolean ordenado = false;
+        Vuelo aux;
+
+        while (iter < n - 1 && !ordenado) {
+            ordenado = true;
+
+            for (j = 0; j <= n - 2 - iter; j++) {
+
+                if (arr[j] == null || arr[j + 1] == null) {
+                    continue; // salta las posiciones vacías
+                }
+
+                int distActual = arr[j].getNumeroRuta().getDistancia();
+                int distSiguiente = arr[j + 1].getNumeroRuta().getDistancia();
+
+                if (distSiguiente < distActual) {
+                    ordenado = false;
+
+                    aux = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = aux;
+                }
+            }
+
+            iter++;
+        }
+
+        Vuelo.imprimirArrVuelosDistancias(arr);
+    }
+
     public static int validarInt(Scanner sc) {
-        while (!sc.hasNextInt()) { // .hasNextInt() Devuelve true si lo próximo que el usuario ingresó es un entero válido.
+        while (!sc.hasNextInt()) { // .hasNextInt() Devuelve true si lo próximo que el usuario ingresó es un entero
+                                   // válido.
             sc.next(); // Evita bucle en el while.
             System.out.print("Ingrese un Número Válido: ");
         }

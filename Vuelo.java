@@ -92,6 +92,10 @@ class Vuelo {
         this.cantidadPasajeros = cantidadPasajeros;
     }
 
+    public int getDistancia() {
+        return ruta.getDistancia();
+    }
+
     // Propios de la clase
 
     // Marca el vuelo como realizado y actualiza los datos del avión
@@ -107,7 +111,7 @@ class Vuelo {
             aterrizo = true;
         }
     }
-    
+
     public static String normalizarDia(String texto) { // Quita las tildes de los dias para evitar errores
         texto = texto.toLowerCase();
         texto = texto.replace("á", "a");
@@ -157,7 +161,8 @@ class Vuelo {
         System.out.println("ID       AVIÓN       RUTA       DÍA       HORA   PASAJEROS   REALIZADO");
         System.out.println("-------------------------------------------------------------------------------");
         for (Vuelo v : arrVuelos) {
-            if (v == null) continue;
+            if (v == null)
+                continue;
             String idAvion = v.getIdAvion() != null ? v.getIdAvion().getIdAvion() : "N/A";
             String idRuta = v.getNumeroRuta() != null ? v.getNumeroRuta().getNumeroRuta() : "N/A";
             System.out.printf("%-8s %-11s %-10s %-9s %-6s %-11d %-10s%n",
@@ -167,6 +172,30 @@ class Vuelo {
                     v.getDia(),
                     v.getHora(),
                     v.getCantidadPasajeros(),
+                    v.getAterrizaje() ? "Sí" : "No");
+        }
+    }
+
+    public static void imprimirArrVuelosDistancias(Vuelo[] arrVuelos) {
+        System.out.println("ID       AVIÓN       RUTA       DÍA       HORA   PASAJEROS   DIST(KM)   REALIZADO");
+        System.out.println("-------------------------------------------------------------------------------------");
+
+        for (Vuelo v : arrVuelos) {
+            if (v == null)
+                continue;
+
+            String idAvion = v.getIdAvion() != null ? v.getIdAvion().getIdAvion() : "N/A";
+            String idRuta = v.getNumeroRuta() != null ? v.getNumeroRuta().getNumeroRuta() : "N/A";
+            int distancia = v.getDistancia(); // ← ahora directo desde Vuelo
+
+            System.out.printf("%-8s %-11s %-10s %-9s %-6s %-11d %-10d %-10s%n",
+                    v.getIdVuelo(),
+                    idAvion,
+                    idRuta,
+                    v.getDia(),
+                    v.getHora(),
+                    v.getCantidadPasajeros(),
+                    distancia,
                     v.getAterrizaje() ? "Sí" : "No");
         }
     }
