@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Scanner;
 
-//NOTAS: Agragar controlador para cuando todas las rutas sean verdaderas de un aviso
 public class Sistema {
     public static void main(String[] args) {
         try (Scanner sc = new Scanner(System.in)) {
