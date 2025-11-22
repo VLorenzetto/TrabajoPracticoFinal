@@ -60,6 +60,13 @@ public class Sistema {
 
                         break;
                     case 9:
+                        int diasLibres = cantidadLibres(cronograma); // contar si hay libres
+                        System.out.println("\nHORARIOS DISPONIBLES: (" + diasLibres + ")\n");
+                        mostrarHorariosLibres(cronograma, 0, 0);
+
+                        if (diasLibres == 0) {
+                            System.out.println("No hay horarios disponibles.");
+                        }
 
                         break;
                     case 10:
@@ -428,23 +435,27 @@ public class Sistema {
         } while (continuar.equals("si") || continuar.equals("s"));
     }
 
-    public static double promedioPasajeros(Vuelo[] arrVuelos, int i, int suma, int cant) {
+    public static double promedioPasajeros(Vuelo[] arrVuelos, int i, int suma, int cant) { 
+        double resultado;
+
         if (i == arrVuelos.length) {
             // Caso base: si no hubo ningún vuelo válido, devolvemos 0 para evitar división
             // por cero, sino hacemos el promedio de los ultimos datos guardados.
-            double promedio = cant == 0 ? 0 : (double) suma / cant;
-            System.out.println("\nEl promedio de pasajeros que efectivamente volaron es: " + promedio);
-            return promedio;
-        }
-        // Paso recursivo: si la posicion esta vacia y el vuelo efectivamente realizó el
-        // aterrizaje, suma la cantidad de pasajeros con la ultima guardada y suma 1 al
-        // contador de aviones.
-        if (arrVuelos[i] != null && arrVuelos[i].getAterrizaje() != false) {
-            suma += arrVuelos[i].getCantidadPasajeros();
-            cant++;
+            resultado = cant == 0 ? 0 : (double) suma / cant;
+            System.out.println("\nEl promedio de pasajeros que efectivamente volaron es: " + resultado);
+        } else {
+            // Paso recursivo: si la posicion esta vacia y el vuelo efectivamente realizó el
+            // aterrizaje, suma la cantidad de pasajeros con la ultima guardada y suma 1 al
+            // contador de aviones.
+            if (arrVuelos[i] != null && arrVuelos[i].getAterrizaje() != false) {
+                suma += arrVuelos[i].getCantidadPasajeros();
+                cant++;
+            }
+            // Llamada recursiva.
+            resultado = promedioPasajeros(arrVuelos, i + 1, suma, cant);
         }
 
-        return promedioPasajeros(arrVuelos, i + 1, suma, cant);
+        return resultado;
     }
 
     public static Vuelo[] listaVuelosPorDia(Vuelo[][] cronograma, Scanner sc) {
@@ -579,18 +590,91 @@ public class Sistema {
 
         int cantidad = hasta - desde;
 
-        Vuelo[] res;
+        Vuelo[] vuelosEnRango;
         if (cantidad <= 0) {
             System.out.println("\nNo hay vuelos en el rango seleccionado.");
-            res = new Vuelo[0]; // nunca null
+            vuelosEnRango = new Vuelo[0]; // nunca null
         } else {
-            res = new Vuelo[cantidad];
+            vuelosEnRango = new Vuelo[cantidad];
             for (int i = 0; i < cantidad; i++) {
-                res[i] = vuelosOrdenados[desde + i];
+                vuelosEnRango[i] = vuelosOrdenados[desde + i];
             }
         }
 
-        return res;
+        return vuelosEnRango;
+    }
+
+    public static void mostrarHorariosLibres(Vuelo[][] cronograma, int dia, int hora) {
+        int sigDia;
+        int sigHora;
+
+        // Caso Base
+        if (dia == cronograma.length) {
+            sigDia = dia;
+            sigHora = hora;
+
+            // Paso recursivo
+        } else {
+            // calcular siguiente casillero
+            sigDia = dia;
+            sigHora = hora + 1;
+            if (sigHora == cronograma[dia].length) {
+                sigDia = dia + 1;
+                sigHora = 0;
+            }
+
+            // si este horario está libre, lo mostramos
+            if (cronograma[dia][hora] == null) {
+                String nombreDia;
+
+                switch (dia) {
+                    case 0:
+                        nombreDia = "Lunes";
+                        break;
+                    case 1:
+                        nombreDia = "Martes";
+                        break;
+                    case 2:
+                        nombreDia = "Miércoles";
+                        break;
+                    case 3:
+                        nombreDia = "Jueves";
+                        break;
+                    case 4:
+                        nombreDia = "Viernes";
+                        break;
+                    case 5:
+                        nombreDia = "Sábado";
+                        break;
+                    case 6:
+                        nombreDia = "Domingo";
+                        break;
+                    default:
+                        nombreDia = "Día " + dia;
+                }
+
+                int horaReal = 8 + hora; // 0 → 08:00, 1 → 09:00, etc.
+                String horaTexto = String.format("%02d:00", horaReal);
+
+                System.out.println(nombreDia + " - " + horaTexto);
+            }
+
+            // Llamada recursiva.
+            mostrarHorariosLibres(cronograma, sigDia, sigHora);
+        }
+
+        return; 
+    }
+
+    public static int cantidadLibres(Vuelo[][] cronograma) {
+        int cont = 0;
+        for (int dia = 0; dia < cronograma.length; dia++) {
+            for (int hora = 0; hora < cronograma[dia].length; hora++) {
+                if (cronograma[dia][hora] == null)
+                    cont++;
+            }
+        }
+        return cont;
     }
 
     public static int validarInt(Scanner sc) {
