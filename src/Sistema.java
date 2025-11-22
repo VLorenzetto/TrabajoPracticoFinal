@@ -66,13 +66,7 @@ public class Sistema {
 
                         break;
                     case 9:
-                        int diasLibres = cantidadLibres(cronograma); // contar si hay libres
-                        System.out.println("\nHORARIOS DISPONIBLES: (" + diasLibres + ")\n");
-                        mostrarHorariosLibres(cronograma, 0, 0);
-
-                        if (diasLibres == 0) {
-                            System.out.println("No hay horarios disponibles.");
-                        }
+                        mostrarHorariosLibres(cronograma);
 
                         break;
                     case 10:
@@ -640,52 +634,55 @@ public class Sistema {
         return vuelosEnRango;
     }
 
-    public static void mostrarHorariosLibres(Vuelo[][] cronograma, int dia, int hora) {
-        int sigDia;
-        int sigHora;
+    // Calcula la cantidad de forma recursiva (según enunciado del TP).
+    public static int cantidadLibres(Vuelo[][] cronograma, int dia, int hora) {
+        int resultado;
 
         // Caso Base
         if (dia == cronograma.length) {
-            sigDia = dia;
-            sigHora = hora;
+            resultado = 0;
 
-            // Paso recursivo
+            // Paso Recursivo
         } else {
-            // calcular siguiente casillero
-            sigDia = dia;
-            sigHora = hora + 1;
+            int libre = (cronograma[dia][hora] == null) ? 1 : 0;
+
+            int sigDia = dia;
+            int sigHora = hora + 1;
             if (sigHora == cronograma[dia].length) {
                 sigDia = dia + 1;
                 sigHora = 0;
             }
 
-            // si este horario está libre, lo mostramos
-            if (cronograma[dia][hora] == null) {
-
-                String nombreDia = nombreDia(dia); // ← módulo separado
-
-                int horaReal = 8 + hora; // 0 → 08:00, 1 → 09:00, etc.
-                String horaTexto = String.format("%02d:00", horaReal);
-
-                System.out.println(nombreDia + " - " + horaTexto);
-            }
-
-            // Llamada recursiva.
-            mostrarHorariosLibres(cronograma, sigDia, sigHora);
+            // Llamada Recursiva
+            resultado = libre + cantidadLibres(cronograma, sigDia, sigHora);
         }
 
-        return;
+        return resultado;
     }
 
-    public static int cantidadLibres(Vuelo[][] cronograma) {
-        int cont = 0;
-        for (int dia = 0; dia < cronograma.length; dia++) {
-            for (int hora = 0; hora < cronograma[dia].length; hora++) {
-                if (cronograma[dia][hora] == null)
-                    cont++;
-            }
+    public static void mostrarHorariosLibres(Vuelo[][] cronograma) {
+
+        int libres = cantidadLibres(cronograma, 0, 0);
+
+        System.out.println("\nHORARIOS DISPONIBLES: (" + libres + ")\n");
+
+        if (libres == 0) {
+            System.out.println("No hay horarios disponibles.");
+            return;
         }
-        return cont;
+
+        // Muestra los dias Disponibles con dia y hora.
+        int dia = 0;
+        for (Vuelo[] fila : cronograma) {
+            int hora = 0;
+            for (Vuelo unVuelo : fila) {
+                if (unVuelo == null) {
+                    System.out.printf("%s - %02d:00\n", nombreDia(dia), 8 + hora);
+                }
+                hora++;
+            }
+            dia++;
+        }
     }
 
     public static Vuelo[] primerVueloInterPorDia(Vuelo[][] cronograma) {
