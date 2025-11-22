@@ -70,6 +70,7 @@ public class Sistema {
 
                         break;
                     case 10:
+                        Vuelo.imprimirArrVuelos(primerVueloInterPorDia(cronograma));
 
                         break;
                     case 0:
@@ -435,7 +436,7 @@ public class Sistema {
         } while (continuar.equals("si") || continuar.equals("s"));
     }
 
-    public static double promedioPasajeros(Vuelo[] arrVuelos, int i, int suma, int cant) { 
+    public static double promedioPasajeros(Vuelo[] arrVuelos, int i, int suma, int cant) {
         double resultado;
 
         if (i == arrVuelos.length) {
@@ -625,33 +626,8 @@ public class Sistema {
 
             // si este horario está libre, lo mostramos
             if (cronograma[dia][hora] == null) {
-                String nombreDia;
 
-                switch (dia) {
-                    case 0:
-                        nombreDia = "Lunes";
-                        break;
-                    case 1:
-                        nombreDia = "Martes";
-                        break;
-                    case 2:
-                        nombreDia = "Miércoles";
-                        break;
-                    case 3:
-                        nombreDia = "Jueves";
-                        break;
-                    case 4:
-                        nombreDia = "Viernes";
-                        break;
-                    case 5:
-                        nombreDia = "Sábado";
-                        break;
-                    case 6:
-                        nombreDia = "Domingo";
-                        break;
-                    default:
-                        nombreDia = "Día " + dia;
-                }
+                String nombreDia = nombreDia(dia); // ← módulo separado
 
                 int horaReal = 8 + hora; // 0 → 08:00, 1 → 09:00, etc.
                 String horaTexto = String.format("%02d:00", horaReal);
@@ -663,7 +639,7 @@ public class Sistema {
             mostrarHorariosLibres(cronograma, sigDia, sigHora);
         }
 
-        return; 
+        return;
     }
 
     public static int cantidadLibres(Vuelo[][] cronograma) {
@@ -675,6 +651,73 @@ public class Sistema {
             }
         }
         return cont;
+    }
+
+   public static Vuelo[] primerVueloInterPorDia(Vuelo[][] cronograma) {
+    System.out.println();// Deja un linea de espacio despues del menú.
+    
+    Vuelo[] temp = new Vuelo[cronograma.length]; // como mucho 1 por día
+    int k = 0;
+
+    for (int i = 0; i < cronograma.length; i++) {
+        boolean encontrado = false;
+
+        for (int j = 0; j < cronograma[i].length && !encontrado; j++) {
+            Vuelo v = cronograma[i][j];
+            if (v != null && v.getEsInternacional()) {
+                temp[k] = v;  // lo guardo compactado
+                k++;
+                encontrado = true; // ya tengo el primero de este día
+            }
+        }
+        
+        if (!encontrado) {
+            System.out.println("No hay vuelos internacionales el día " + nombreDia(i));
+        }
+    }
+
+    if (k == 0) {                 // ningún vuelo internacional encontrado
+        return new Vuelo[0];      // arreglo vacío, nunca null
+    }
+
+    Vuelo[] resultado = new Vuelo[k]; // solo con los encontrados
+    for (int i = 0; i < k; i++) {
+        resultado[i] = temp[i];
+    }
+
+    return resultado;
+}
+
+    public static String nombreDia(int dia) {
+        String nombreDia;
+
+        switch (dia) {
+            case 0:
+                nombreDia = "Lunes";
+                break;
+            case 1:
+                nombreDia = "Martes";
+                break;
+            case 2:
+                nombreDia = "Miércoles";
+                break;
+            case 3:
+                nombreDia = "Jueves";
+                break;
+            case 4:
+                nombreDia = "Viernes";
+                break;
+            case 5:
+                nombreDia = "Sábado";
+                break;
+            case 6:
+                nombreDia = "Domingo";
+                break;
+            default:
+                nombreDia = "Día " + dia;
+        }
+
+        return nombreDia;
     }
 
     public static int validarInt(Scanner sc) {

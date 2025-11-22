@@ -96,6 +96,10 @@ class Vuelo {
         return ruta.getDistancia();
     }
 
+    public boolean getEsInternacional(){
+        return ruta.getEsInternacional();
+    }
+
     // Propios de la clase
 
     // Marca el vuelo como realizado y actualiza los datos del avión
@@ -160,8 +164,8 @@ class Vuelo {
 
     public static void imprimirArrVuelos(Vuelo[] arrVuelos) {
         if (arrVuelos.length == 0) return;
-        System.out.println("\nID       AVIÓN       RUTA       DÍA       HORA   PASAJEROS   DIST(KM)   REALIZADO");
-        System.out.println("-------------------------------------------------------------------------------------");
+        System.out.println("\nID       AVIÓN       RUTA       DÍA         HORA   PASAJEROS   DIST(KM)   REALIZADO");
+        System.out.println("--------------------------------------------------------------------------------------");
 
         for (Vuelo v : arrVuelos) {
             if (v == null)
@@ -171,7 +175,7 @@ class Vuelo {
             String idRuta = v.getNumeroRuta() != null ? v.getNumeroRuta().getNumeroRuta() : "N/A";
             int distancia = v.getDistancia(); // ← ahora directo desde Vuelo
 
-            System.out.printf("%-8s %-11s %-10s %-9s %-6s %-11d %-10d %-10s%n",
+            System.out.printf("%-8s %-11s %-10s %-11s %-9s %-11d %-10d %-10s%n",
                     v.getIdVuelo(),
                     idAvion,
                     idRuta,
