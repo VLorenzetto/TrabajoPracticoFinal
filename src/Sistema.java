@@ -10,10 +10,17 @@ public class Sistema {
     public static void main(String[] args) {
         try (Scanner sc = new Scanner(System.in)) {
 
+            // Designar ubicaciones de las rutas con los archivos txt.
+            String rutaTxtAviones = "C:\\Users\\valen\\OneDrive\\Desktop\\TrabajoPrácticoFinal\\src\\Aviones.txt";
+            String rutaTxtRutas = "C:\\Users\\valen\\OneDrive\\Desktop\\TrabajoPrácticoFinal\\src\\Rutas.txt";
+            String rutaTxtVuelos = "C:\\Users\\valen\\OneDrive\\Desktop\\TrabajoPrácticoFinal\\src\\Vuelos.txt";
+
             // Declaracion de Arreglos y Matrices
-            Avion[] arrAviones = new Avion[100];
-            Ruta[] arrRutas = new Ruta[100];
-            Vuelo[] arrVuelos = new Vuelo[120];
+            // Calculo es tamaño del arreglo de acuerdo al largo de la lista + 20 espacios
+            // para operar.
+            Avion[] arrAviones = new Avion[calcularLargoLista(rutaTxtAviones) + 20];
+            Ruta[] arrRutas = new Ruta[calcularLargoLista(rutaTxtRutas) + 20];
+            Vuelo[] arrVuelos = new Vuelo[calcularLargoLista(rutaTxtVuelos) + 20];
             Vuelo[][] cronograma = new Vuelo[7][15]; // 7 dias de la semana x 15 horas habiles del aereopuerto.
 
             int opcion;
@@ -23,10 +30,10 @@ public class Sistema {
 
                 switch (opcion) {
                     case 1:
-                        cargarAviones(arrAviones);
-                        cargarRutas(arrRutas);
-                        cargarVuelos(arrVuelos, arrAviones, arrRutas);
-                        System.out.println("\nDatos EXTRAIDOS y ALMACENADOS Correctamente.");
+                        cargarAviones(arrAviones, rutaTxtAviones);
+                        cargarRutas(arrRutas, rutaTxtRutas);
+                        cargarVuelos(arrVuelos, arrAviones, arrRutas, rutaTxtVuelos);
+                        System.out.println("\nDatos EXTRAIDOS y ALMACENADOS Correctamente."); // Corregir segun notas
                         cargarCronograma(cronograma, arrVuelos);
 
                         break;
@@ -110,9 +117,7 @@ public class Sistema {
     }
 
     // Cargar aviones desde un archivo .txt
-    public static void cargarAviones(Avion[] arrAviones) {
-
-        String rutaArchivo = "C:\\Users\\valen\\OneDrive\\Desktop\\TrabajoPrácticoFinal\\src\\Aviones.txt";
+    public static void cargarAviones(Avion[] arrAviones, String rutaTxtAviones) {
 
         try {
             // BufferedReader permite leer línea por línea.
@@ -120,7 +125,7 @@ public class Sistema {
             // codificación convertir esos bytes → caracteres.
             // "UTF-8" asegura que las tildes y ñ se lean bien.
             BufferedReader lector = new BufferedReader(
-                    new InputStreamReader(new FileInputStream(rutaArchivo), "UTF-8"));
+                    new InputStreamReader(new FileInputStream(rutaTxtAviones), "UTF-8"));
             String linea;
             int largoLista = 0;
 
@@ -146,9 +151,7 @@ public class Sistema {
     }
 
     // Cargar rutas desde un archivo .txt
-    public static void cargarRutas(Ruta[] arrRutas) {
-
-        String rutaArchivo = "C:\\Users\\valen\\OneDrive\\Desktop\\TrabajoPrácticoFinal\\src\\Rutas.txt";
+    public static void cargarRutas(Ruta[] arrRutas, String rutaTxtRutas) {
 
         try {
             // BufferedReader permite leer línea por línea.
@@ -156,7 +159,7 @@ public class Sistema {
             // codificación convertir esos bytes → caracteres.
             // "UTF-8" asegura que las tildes y ñ se lean bien.
             BufferedReader lector = new BufferedReader(
-                    new InputStreamReader(new FileInputStream(rutaArchivo), "UTF-8"));
+                    new InputStreamReader(new FileInputStream(rutaTxtRutas), "UTF-8"));
             String linea;
             int largoLista = 0;
 
@@ -184,11 +187,10 @@ public class Sistema {
     }
 
     // Cargar vuelos desde un archivo .txt
-    public static void cargarVuelos(Vuelo[] arrVuelos, Avion[] arrAviones, Ruta[] arrRutas) {
-        String rutaArchivo = "C:\\Users\\valen\\OneDrive\\Desktop\\TrabajoPrácticoFinal\\src\\Vuelos.txt";
+    public static void cargarVuelos(Vuelo[] arrVuelos, Avion[] arrAviones, Ruta[] arrRutas, String rutaTxtVuelos) {
 
         try (BufferedReader lector = new BufferedReader(
-                new InputStreamReader(new FileInputStream(rutaArchivo), "UTF-8"))) {
+                new InputStreamReader(new FileInputStream(rutaTxtVuelos), "UTF-8"))) {
             String linea;
             int largoLista = 0;
 
@@ -653,40 +655,40 @@ public class Sistema {
         return cont;
     }
 
-   public static Vuelo[] primerVueloInterPorDia(Vuelo[][] cronograma) {
-    System.out.println();// Deja un linea de espacio despues del menú.
-    
-    Vuelo[] temp = new Vuelo[cronograma.length]; // como mucho 1 por día
-    int k = 0;
+    public static Vuelo[] primerVueloInterPorDia(Vuelo[][] cronograma) {
+        System.out.println();// Deja un linea de espacio despues del menú.
 
-    for (int i = 0; i < cronograma.length; i++) {
-        boolean encontrado = false;
+        Vuelo[] temp = new Vuelo[cronograma.length]; // como mucho 1 por día
+        int k = 0;
 
-        for (int j = 0; j < cronograma[i].length && !encontrado; j++) {
-            Vuelo v = cronograma[i][j];
-            if (v != null && v.getEsInternacional()) {
-                temp[k] = v;  // lo guardo compactado
-                k++;
-                encontrado = true; // ya tengo el primero de este día
+        for (int i = 0; i < cronograma.length; i++) {
+            boolean encontrado = false;
+
+            for (int j = 0; j < cronograma[i].length && !encontrado; j++) {
+                Vuelo v = cronograma[i][j];
+                if (v != null && v.getEsInternacional()) {
+                    temp[k] = v; // lo guardo compactado
+                    k++;
+                    encontrado = true; // ya tengo el primero de este día
+                }
+            }
+
+            if (!encontrado) {
+                System.out.println("No hay vuelos internacionales el día " + nombreDia(i));
             }
         }
-        
-        if (!encontrado) {
-            System.out.println("No hay vuelos internacionales el día " + nombreDia(i));
+
+        if (k == 0) { // ningún vuelo internacional encontrado
+            return new Vuelo[0]; // arreglo vacío, nunca null
         }
-    }
 
-    if (k == 0) {                 // ningún vuelo internacional encontrado
-        return new Vuelo[0];      // arreglo vacío, nunca null
-    }
+        Vuelo[] resultado = new Vuelo[k]; // solo con los encontrados
+        for (int i = 0; i < k; i++) {
+            resultado[i] = temp[i];
+        }
 
-    Vuelo[] resultado = new Vuelo[k]; // solo con los encontrados
-    for (int i = 0; i < k; i++) {
-        resultado[i] = temp[i];
+        return resultado;
     }
-
-    return resultado;
-}
 
     public static String nombreDia(int dia) {
         String nombreDia;
@@ -718,6 +720,33 @@ public class Sistema {
         }
 
         return nombreDia;
+    }
+
+    public static int calcularLargoLista(String rutaArchivo) {
+        int largoLista = 0;
+
+        try {
+            BufferedReader lector = new BufferedReader(
+                    new InputStreamReader(new FileInputStream(rutaArchivo), "UTF-8"));
+
+            String linea;
+
+            while ((linea = lector.readLine()) != null) {
+                if (!linea.trim().isEmpty()) { // solo cuenta si la línea tiene texto real
+
+                    largoLista++;
+                }
+            }
+
+            lector.close();
+
+        } catch (FileNotFoundException ex) {
+            System.out.println("Error: " + ex.getMessage());
+        } catch (IOException ex) {
+            System.err.println("Error: " + ex.getMessage());
+        }
+
+        return largoLista;
     }
 
     public static int validarInt(Scanner sc) {
