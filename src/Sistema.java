@@ -33,7 +33,6 @@ public class Sistema {
                         cargarAviones(arrAviones, rutaTxtAviones);
                         cargarRutas(arrRutas, rutaTxtRutas);
                         cargarVuelos(arrVuelos, arrAviones, arrRutas, rutaTxtVuelos);
-                        System.out.println("\nDatos EXTRAIDOS y ALMACENADOS Correctamente."); // Corregir segun notas
                         cargarCronograma(cronograma, arrVuelos);
 
                         break;
@@ -55,7 +54,7 @@ public class Sistema {
 
                         break;
                     case 6:
-                        
+
                         Vuelo.imprimirArrVuelos(ordenarPorKm(listaVuelosPorDia(cronograma, sc)));
 
                         break;
@@ -119,7 +118,7 @@ public class Sistema {
 
     // Cargar aviones desde un archivo .txt
     public static void cargarAviones(Avion[] arrAviones, String rutaTxtAviones) {
-
+        System.out.println();
         try {
             // BufferedReader permite leer línea por línea.
             // FileInputStream abre el archivo como bytes, InputStreamReader dice con qué
@@ -143,6 +142,7 @@ public class Sistema {
                 largoLista++;
             }
             lector.close(); // Cierra el archivo
+            System.out.println("Aviones cargados Exitosamente.");
 
         } catch (FileNotFoundException ex) {
             System.out.println("Error: " + ex.getMessage()); // Error al hallar la ruta
@@ -178,6 +178,7 @@ public class Sistema {
                 largoLista++;
             }
             lector.close();
+            System.out.println("Rutas cargados Exitosamente.");
 
         } catch (FileNotFoundException ex) {
             System.out.println("Error: " + ex.getMessage()); // Error al hallar la ruta
@@ -210,6 +211,8 @@ public class Sistema {
                     arrVuelos[largoLista++] = unVuelo;
                 }
             }
+            lector.close();
+            System.out.println("Vuelos cargados Exitosamente.");
         } catch (FileNotFoundException ex) {
             System.out.println("Error: " + ex.getMessage());
         } catch (IOException ex) {
@@ -233,26 +236,40 @@ public class Sistema {
 
     public static void cargarCronograma(Vuelo[][] cronograma, Vuelo[] arrVuelos) {
         System.out.println();
+
+        if (cronograma == null || arrVuelos == null || arrVuelos.length == 0) {
+            System.out.println("No se pudo cargar el cronograma (arreglos nulos o vacíos).");
+            return;
+        }
+
+        int cargados = 0;
+
         for (Vuelo unVuelo : arrVuelos) {
             if (unVuelo == null)
                 continue;
-            int dia = Vuelo.posicionDia(unVuelo.getDia());
-            int hora = Vuelo.posicionHora(unVuelo.getHora());
-            if (dia < 0 || dia >= cronograma.length || hora < 0 || hora >= cronograma[0].length) {
-                System.out.println(
-                        "Aviso: Vuelo " + unVuelo.getIdVuelo() + " con DIA/HORA inválidos (" + unVuelo.getDia() + " "
-                                + unVuelo.getHora() + ")");
+
+            int d = Vuelo.posicionDia(unVuelo.getDia());
+            int h = Vuelo.posicionHora(unVuelo.getHora());
+
+            if (d < 0 || d >= cronograma.length || h < 0 || h >= cronograma[0].length) {
+                System.out.println("Aviso: Vuelo " + unVuelo.getIdVuelo() + " tiene día/hora inválidos.");
                 continue;
             }
-            if (cronograma[dia][hora] != null) {
-                System.out.println(
-                        "Aviso: Horario ocupado para Vuelo (" + unVuelo.getIdVuelo() + ") en " + unVuelo.getDia() + " "
-                                + unVuelo.getHora());
+
+            if (cronograma[d][h] != null) {
+                System.out.println("Aviso: horario ocupado para vuelo " + unVuelo.getIdVuelo());
                 continue;
             }
-            cronograma[dia][hora] = unVuelo;
+
+            cronograma[d][h] = unVuelo; // carga correcta
+            cargados++;
         }
-        System.out.println("\nEl CRONOGRAMA ha sido Actualizado.");
+
+        System.out.println(
+                (cargados == 0)
+                        ? "\nNo se pudo agregar ningún vuelo al cronograma."
+                        : "\nCronograma actualizado correctamente (" + cargados + " vuelos cargados).");
+
     }
 
     public static void cargarOtroAvion(Avion[] arrAviones, Scanner sc) {
@@ -462,18 +479,18 @@ public class Sistema {
         return resultado;
     }
 
-   public static Vuelo[] listaVuelosPorDia(Vuelo[][] cronograma, Scanner sc) {
+    public static Vuelo[] listaVuelosPorDia(Vuelo[][] cronograma, Scanner sc) {
 
         String dia;
         do {
-            System.out.print("\nIngrese el DIA para buscar vuelos: ");
+            System.out.print("\nIngrese un día para buscar vuelos: ");
             dia = validarString(sc).toLowerCase();
 
             if (!dia.equals("lunes") && !dia.equals("martes") && !dia.equals("miercoles") &&
-                !dia.equals("jueves") && !dia.equals("viernes") &&
-                !dia.equals("sabado") && !dia.equals("domingo")) {
+                    !dia.equals("jueves") && !dia.equals("viernes") &&
+                    !dia.equals("sabado") && !dia.equals("domingo")) {
 
-                System.out.println("Ingrese un dia valido.");
+                System.out.println("Ingrese un día valido.");
                 dia = null;
             }
 
@@ -492,7 +509,7 @@ public class Sistema {
 
         // Si no hay vuelos para ese día devuelve arreglo vacío.
         if (cantidad == 0) {
-            System.out.println("\nNo hay vuelos disponibles el dia "+ nombreDia(posDia)+".");
+            System.out.println("\nNo hay vuelos disponibles el día " + nombreDia(posDia) + ".");
             return new Vuelo[0];
         }
 
