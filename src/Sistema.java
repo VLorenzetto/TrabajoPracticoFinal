@@ -55,6 +55,7 @@ public class Sistema {
 
                         break;
                     case 6:
+                        
                         Vuelo.imprimirArrVuelos(ordenarPorKm(listaVuelosPorDia(cronograma, sc)));
 
                         break;
@@ -461,32 +462,48 @@ public class Sistema {
         return resultado;
     }
 
-    public static Vuelo[] listaVuelosPorDia(Vuelo[][] cronograma, Scanner sc) {
-        Vuelo[] vuelos = new Vuelo[cronograma[0].length];
-        boolean diaValido = false;
-        String dia = null;
-        do {
-            System.out.print("Ingrese el DIA para buscar vuelos: ");
-            dia = validarString(sc).toLowerCase();
-            diaValido = false;
-            // Repite hasta ingresar un dia valido.
-            if (dia.equals("lunes") || dia.equals("martes") || dia.equals("miercoles") || dia.equals("jueves")
-                    || dia.equals("viernes") || dia.equals("sabado") || dia.equals("domingo")) {
-                diaValido = true;
+   public static Vuelo[] listaVuelosPorDia(Vuelo[][] cronograma, Scanner sc) {
 
-                break;
-            }
-            if (!diaValido) {
+        String dia;
+        do {
+            System.out.print("\nIngrese el DIA para buscar vuelos: ");
+            dia = validarString(sc).toLowerCase();
+
+            if (!dia.equals("lunes") && !dia.equals("martes") && !dia.equals("miercoles") &&
+                !dia.equals("jueves") && !dia.equals("viernes") &&
+                !dia.equals("sabado") && !dia.equals("domingo")) {
+
                 System.out.println("Ingrese un dia valido.");
+                dia = null;
             }
-        } while (!diaValido);
-        // Si el dia es valido busca en que posicion está dentro de la matriz cronograma
-        // y guarda todos los vuelos de ese dia en un nuevo arreglo.
-        int k = Vuelo.posicionDia(dia);
-        int j = 0;
-        for (int i = 0; i < cronograma[0].length; i++) {
-            vuelos[j] = cronograma[k][i];
-            j++;
+
+        } while (dia == null);
+
+        // Buscar posición dentro de cronograma
+        int posDia = Vuelo.posicionDia(dia);
+
+        // Contar vuelos no nulos.
+        int cantidad = 0;
+        for (int i = 0; i < cronograma[posDia].length; i++) {
+            if (cronograma[posDia][i] != null) {
+                cantidad++;
+            }
+        }
+
+        // Si no hay vuelos para ese día devuelve arreglo vacío.
+        if (cantidad == 0) {
+            System.out.println("\nNo hay vuelos disponibles el dia "+ nombreDia(posDia)+".");
+            return new Vuelo[0];
+        }
+
+        // Copiar solo los vuelos válidos.
+        Vuelo[] vuelos = new Vuelo[cantidad];
+        int k = 0;
+
+        for (int i = 0; i < cronograma[posDia].length; i++) {
+            if (cronograma[posDia][i] != null) {
+                vuelos[k++] = cronograma[posDia][i];
+            }
         }
 
         return vuelos;
