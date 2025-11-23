@@ -594,53 +594,75 @@ public class Sistema {
 
     //Busqueda de vuelos en un rango determinado.
     public static Vuelo[] buscarVuelosEnRango(Vuelo[] arrVuelos, Scanner sc) {
-        Vuelo[] vuelosOrdenados = ordenarPorKm(arrVuelos);
 
-        System.out.print("Ingrese distancia Minima: ");
-        int kmMin = validarInt(sc);
-
-        System.out.print("Ingrese distancia Maxima: ");
-        int kmMax = validarInt(sc);
-
-        int ini = 0, fin = vuelosOrdenados.length, medio;
-
-        // Busqueda binaria para primer índice con km >= kmMin
-        while (ini < fin) {
-            medio = (ini + fin) / 2;
-            if (vuelosOrdenados[medio].getDistancia() >= kmMin)
-                fin = medio;
-            else
-                ini = medio + 1;
+    // Copiar solo los vuelos no nulos a un arreglo nuevo
+    int cant = 0;
+    for (Vuelo unVuelo : arrVuelos) {
+        if (unVuelo != null) {
+            cant++;
         }
-        int desde = ini;
-
-        // Busqueda binaria para primer índice con km > kmMax
-        ini = desde;
-        fin = vuelosOrdenados.length;
-        while (ini < fin) {
-            medio = (ini + fin) / 2;
-            if (vuelosOrdenados[medio].getDistancia() > kmMax)
-                fin = medio;
-            else
-                ini = medio + 1;
-        }
-        int hasta = ini;
-
-        int cantidad = hasta - desde;
-
-        Vuelo[] vuelosEnRango;
-        if (cantidad <= 0) {
-            System.out.println("\nNo hay vuelos en el rango seleccionado.");
-            vuelosEnRango = new Vuelo[0]; // nunca null
-        } else {
-            vuelosEnRango = new Vuelo[cantidad];
-            for (int i = 0; i < cantidad; i++) {
-                vuelosEnRango[i] = vuelosOrdenados[desde + i];
-            }
-        }
-
-        return vuelosEnRango;
     }
+
+    Vuelo[] vuelosSinNull = new Vuelo[cant];
+    int k = 0;
+    for (Vuelo otroVuelo : arrVuelos) {
+        if (otroVuelo != null) {
+            vuelosSinNull[k] = otroVuelo;
+            k++;
+        }
+    }
+
+    // Ordenar por km 
+    Vuelo[] vuelosOrdenados = ordenarPorKm(vuelosSinNull);
+
+    // Pedir rangos al usuario
+    System.out.print("Ingrese distancia Minima: ");
+    int kmMin = validarInt(sc);
+
+    System.out.print("Ingrese distancia Maxima: ");
+    int kmMax = validarInt(sc);
+
+    int ini = 0, fin = vuelosOrdenados.length, medio;
+
+    // Busqueda binaria para primer índice con km >= kmMin
+    while (ini < fin) {
+        medio = (ini + fin) / 2;
+        if (vuelosOrdenados[medio].getDistancia() >= kmMin) {
+            fin = medio;
+        } else {
+            ini = medio + 1;
+        }
+    }
+    int desde = ini;
+
+    // Busqueda binaria para primer índice con km > kmMax
+    ini = desde;
+    fin = vuelosOrdenados.length;
+    while (ini < fin) {
+        medio = (ini + fin) / 2;
+        if (vuelosOrdenados[medio].getDistancia() > kmMax) {
+            fin = medio;
+        } else {
+            ini = medio + 1;
+        }
+    }
+    int hasta = ini;
+
+    int cantidad = hasta - desde;
+
+    Vuelo[] vuelosEnRango;
+    if (cantidad <= 0) {
+        System.out.println("\nNo hay vuelos en el rango seleccionado.");
+        vuelosEnRango = new Vuelo[0]; 
+    } else {
+        vuelosEnRango = new Vuelo[cantidad];
+        for (int i = 0; i < cantidad; i++) {
+            vuelosEnRango[i] = vuelosOrdenados[desde + i];
+        }
+    }
+
+    return vuelosEnRango;
+}
 
     // Calcula la cantidad de forma recursiva (según enunciado del TP).
     public static int cantidadLibres(Vuelo[][] cronograma, int dia, int hora) {
