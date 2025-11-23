@@ -105,7 +105,7 @@ public class Sistema {
             System.out.print("Ingrese una referencia numérica valida: ");
         }
         int opcion = sc.nextInt();
-        sc.nextLine(); // consumir el salto de línea restante
+        sc.nextLine(); 
         return opcion;
     }
 
@@ -213,6 +213,7 @@ public class Sistema {
         }
     }
 
+    // Busca en el arreglo de aviones si existe el id ingresado.
     private static Avion buscarAvion(Avion[] arr, String idAvion) {
         for (Avion unAvion : arr)
             if (unAvion != null && unAvion.getIdAvion().equals(idAvion))
@@ -220,6 +221,7 @@ public class Sistema {
         return null;
     }
 
+    // Busca en el arreglo de rutas si existe el id ingresado.
     private static Ruta buscarRuta(Ruta[] arrRutas, String id) {
         for (Ruta unaRuta : arrRutas)
             if (unaRuta != null && unaRuta.getNumeroRuta().equals(id))
@@ -227,6 +229,7 @@ public class Sistema {
         return null;
     }
 
+    //Carga y ordena los vuelos en el cronograma.
     public static void cargarCronograma(Vuelo[][] cronograma, Vuelo[] arrVuelos) {
         System.out.println();
 
@@ -254,7 +257,7 @@ public class Sistema {
                 continue;
             }
 
-            cronograma[d][h] = unVuelo; // carga correcta
+            cronograma[d][h] = unVuelo; // carga el vuelo en el cronograma
             cargados++;
         }
 
@@ -265,6 +268,7 @@ public class Sistema {
 
     }
 
+    // Carga de aviones manualmente.
     public static void cargarOtroAvion(Avion[] arrAviones, Scanner sc) {
 
         String continuar;
@@ -297,7 +301,6 @@ public class Sistema {
             System.out.print("Ingrese los KILOMETROS RECORRIDOS: ");
             int kmRecorridos = validarInt(sc);
 
-            // Se crea un avion de la clase Avion
             Avion nuevoAvion = new Avion(idAvion, modeloAvion, cantidadVuelos, cantidadAsientos, kmRecorridos);
 
             // Ingresa el nuevo Avion al arreglo existente.
@@ -316,11 +319,11 @@ public class Sistema {
 
     }
 
+    // Carga de vuelos manualmente
     public static void cargarOtroVuelo(Vuelo[] arrVuelos, Avion[] arrAviones, Ruta[] arrRutas, Scanner sc) {
         String continuar;
         do {
             // Busca si existe el id del Vuelo ingresado.
-
             String idVuelo = null;
             boolean idVueloExiste = true;
             while (idVueloExiste) {
@@ -410,6 +413,7 @@ public class Sistema {
         } while (continuar.equals("s") || continuar.equals("si"));
     }
 
+    // Marcar la realizacion efectiva de un vuelo.
     public static void marcarRealizacionVuelo(Vuelo[] arrVuelos, Scanner sc) {
         String continuar;
         do {
@@ -449,6 +453,7 @@ public class Sistema {
         } while (continuar.equals("si") || continuar.equals("s"));
     }
 
+    // Calcula el promedio de los pasajeros que volaron y aterrizaron efectivamente.
     public static double promedioPasajeros(Vuelo[] arrVuelos, int i, int suma, int cant) {
         double resultado;
 
@@ -472,6 +477,7 @@ public class Sistema {
         return resultado;
     }
 
+    // Busqueda de vuelos en el cronograma segun dia.
     public static Vuelo[] listaVuelosPorDia(Vuelo[][] cronograma, Scanner sc) {
 
         String dia;
@@ -519,9 +525,9 @@ public class Sistema {
         return vuelos;
     }
 
+    // Metodo de ordenamiento Burbuja Mejorado para ordenar el arrVuelos según km (ascendente).
     public static Vuelo[] ordenarPorKm(Vuelo[] arrVuelos) {
 
-        // Utilicé el metodo BURBUJA MEJORADO.
         int i = 0;
         boolean ordenado = false;
         Vuelo aux;
@@ -559,6 +565,7 @@ public class Sistema {
         return arrVuelos; // Retorna el arr con los vuelos ordenados de forma ascendente.
     }
 
+    // Muestra de los datos de un avion particular según id.
     public static void mostrarDatosAvion(Avion[] arrAviones, Scanner sc) {
         // Busca si existe el id del Avion ingresado.
         Avion idAvionEncontrado = null;
@@ -585,6 +592,7 @@ public class Sistema {
         System.out.println(idAvionEncontrado.toString());
     }
 
+    //Busqueda de vuelos en un rango determinado.
     public static Vuelo[] buscarVuelosEnRango(Vuelo[] arrVuelos, Scanner sc) {
         Vuelo[] vuelosOrdenados = ordenarPorKm(arrVuelos);
 
@@ -660,6 +668,7 @@ public class Sistema {
         return resultado;
     }
 
+    //Busca y muestra los dias libres del cronograma.
     public static void mostrarHorariosLibres(Vuelo[][] cronograma) {
 
         int libres = cantidadLibres(cronograma, 0, 0);
@@ -685,6 +694,7 @@ public class Sistema {
         }
     }
 
+    // Busca y muestra el primer vuelo internacional de cada dia de la semana.
     public static Vuelo[] primerVueloInterPorDia(Vuelo[][] cronograma) {
         System.out.println();// Deja un linea de espacio despues del menú.
 
@@ -695,9 +705,9 @@ public class Sistema {
             boolean encontrado = false;
 
             for (int j = 0; j < cronograma[i].length && !encontrado; j++) {
-                Vuelo v = cronograma[i][j];
-                if (v != null && v.getEsInternacional()) {
-                    temp[k] = v; // lo guardo compactado
+                Vuelo unVuelo = cronograma[i][j];
+                if (unVuelo != null && unVuelo.getEsInternacional()) {
+                    temp[k] = unVuelo; // lo guardo compactado
                     k++;
                     encontrado = true; // ya tengo el primero de este día
                 }
@@ -709,7 +719,7 @@ public class Sistema {
         }
 
         if (k == 0) { // ningún vuelo internacional encontrado
-            return new Vuelo[0]; // arreglo vacío, nunca null
+            return new Vuelo[0]; // arreglo vacío
         }
 
         Vuelo[] resultado = new Vuelo[k]; // solo con los encontrados
@@ -720,6 +730,7 @@ public class Sistema {
         return resultado;
     }
 
+    // Devuelve el nombre de un dia segun su posición en el cronograma.
     public static String nombreDia(int dia) {
         String nombreDia;
 
@@ -752,6 +763,7 @@ public class Sistema {
         return nombreDia;
     }
 
+    // Calcula el largo que va a tener un arr según el tamaño del archivo .txt.
     public static int calcularLargoLista(String rutaArchivo) {
         int largoLista = 0;
 
@@ -779,6 +791,7 @@ public class Sistema {
         return largoLista;
     }
 
+    // Metodo de Scanner para validar que siempre se ingrese una variable int.
     public static int validarInt(Scanner sc) {
         // .hasNextInt() Devuelve true si lo próximo que el usuario ingresó es un entero
         // válido.
@@ -791,6 +804,7 @@ public class Sistema {
         return entero;
     }
 
+    // Metodo de Scanner para validar y normalizar el ingreso de variables String.
     public static String validarString(Scanner sc) {
         String cadena = sc.nextLine().trim().replaceAll("\\s+", " ");
         // .trim() Quita los espacios de los extremos.
